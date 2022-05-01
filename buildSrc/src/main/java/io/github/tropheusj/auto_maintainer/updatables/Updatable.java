@@ -46,4 +46,9 @@ public interface Updatable {
 	default UpdateRequirement updateType() {
 		return UpdateRequirement.REQUIRED_FOR_UPDATE;
 	}
+
+	default void disable(Project project, Properties properties) {
+		if (updateType() != UpdateRequirement.DISABLE_IF_UNAVAILABLE)
+			throw new RuntimeException("Cannot disable a non-disableable dependency!");
+	}
 }

@@ -9,6 +9,7 @@ import org.gradle.api.Project;
 import java.util.Properties;
 
 public abstract class GradlePropertiesBasedUpdatable implements Updatable {
+	public static final String DISABLED_MARKER = "%DISABLED%";
 	protected String currentVersion;
 	protected String newVersion;
 	protected String name;
@@ -43,5 +44,10 @@ public abstract class GradlePropertiesBasedUpdatable implements Updatable {
 	@Override
 	public String updateVersion() {
 		return newVersion;
+	}
+
+	@Override
+	public void disable(Project project, Properties properties) {
+		properties.setProperty(propertyKey, DISABLED_MARKER);
 	}
 }
