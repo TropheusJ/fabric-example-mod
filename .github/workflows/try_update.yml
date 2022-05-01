@@ -1,4 +1,4 @@
-name: build
+name: try_update
 on:
   schedule:
     # run every day at 5:00 PM
