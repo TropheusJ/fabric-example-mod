@@ -6,67 +6,36 @@ import com.google.gson.JsonObject;
 
 import io.github.tropheusj.auto_maintainer.Config;
 import io.github.tropheusj.auto_maintainer.Util;
-import io.github.tropheusj.auto_maintainer.updatables.Updatable;
 
-import io.github.tropheusj.auto_maintainer.updatables.UpdateType;
+import io.github.tropheusj.auto_maintainer.updatables.UpdateRequirement;
 
 import org.gradle.api.Project;
-
-import javax.annotation.Nullable;
 
 import java.util.Properties;
 
 /**
  * An Updatable for any mod found on Modrinth.
  */
-public class ModrinthUpdatable implements Updatable {
-	private final String name;
+public class ModrinthUpdatable extends GradlePropertiesBasedUpdatable {
 	private final String projectId;
-	private final String gradlePropertiesKey;
-	private final UpdateType type;
-	private String currentVersion;
-	private String newVersion;
+	private final UpdateRequirement type;
 
-	public ModrinthUpdatable(String name, String projectId, String gradlePropertiesKey, UpdateType type) {
-		this.name = name;
+	public ModrinthUpdatable(String name, String projectId, String gradlePropertiesKey, UpdateRequirement type) {
+		super(name, gradlePropertiesKey);
 		this.projectId = projectId;
-		this.gradlePropertiesKey = gradlePropertiesKey;
 		this.type = type;
 	}
 
 	@Override
 	public void initialize(Project project, Properties properties, Config config) {
-		currentVersion = properties.getProperty(gradlePropertiesKey);
-		Util.checkNull(currentVersion, name, gradlePropertiesKey);
-		Updatable mc = config.getUpdatables().get(MinecraftUpdatable.UPDATABLE_KEY);
-		String mcVer = mc.updateVersion();
+		super.initialize(project, properties, config);
+		String mcVer = Util.getMcVer(config);
 		newVersion = findLatestFromMcVer(mcVer, projectId);
 	}
 
 	@Override
-	public boolean hasUpdate() {
-		return newVersion != null && !currentVersion.equals(newVersion);
-	}
-
-	@Override
-	public UpdateType updateType() {
+	public UpdateRequirement updateType() {
 		return type;
-	}
-
-	@Override
-	public void update(Project project, Properties properties) {
-		properties.setProperty(gradlePropertiesKey, newVersion);
-	}
-
-	@Override
-	public String currentVersion() {
-		return currentVersion;
-	}
-
-	@Nullable
-	@Override
-	public String updateVersion() {
-		return newVersion;
 	}
 
 	public static String findLatestFromMcVer(String mcVer, String projectId) {

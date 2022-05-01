@@ -8,7 +8,6 @@ import com.google.gson.JsonObject;
 
 import io.github.tropheusj.auto_maintainer.Config;
 import io.github.tropheusj.auto_maintainer.Util;
-import io.github.tropheusj.auto_maintainer.updatables.Updatable;
 
 import org.gradle.api.Project;
 
@@ -16,18 +15,19 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
-public class QuiltMappingsUpdatable implements Updatable {
+public class QuiltMappingsUpdatable extends GradlePropertiesBasedUpdatable {
 	public static final String QM_KEY = "qm_build";
 	public static final String QM_META = "https://meta.quiltmc.org/v3/versions/quilt-mappings";
 
-	private int currentBuild;
-	private int newBuild;
+	public QuiltMappingsUpdatable() {
+		super("Quilt Mappings", QM_KEY);
+	}
 
 	@Override
 	public void initialize(Project project, Properties properties, Config config) {
-		currentBuild = Integer.parseInt(properties.getProperty(QM_KEY));
+		super.initialize(project, properties, config);
 		String mcVer = config.getUpdatables().get(MinecraftUpdatable.UPDATABLE_KEY).updateVersion();
-		newBuild = findLatestBuild(mcVer);
+		newVersion = String.valueOf(findLatestBuild(mcVer));
 	}
 
 	public static int findLatestBuild(String mcVer) {
@@ -47,26 +47,5 @@ public class QuiltMappingsUpdatable implements Updatable {
 			return -Integer.compare(build1, build2); // negate: bigger numbers earlier in list
 		});
 		return candidates.get(0).get("build").getAsInt();
-	}
-
-	@Override
-	public boolean hasUpdate() {
-		return currentBuild != newBuild;
-	}
-
-	@Override
-	public void update(Project project, Properties properties) {
-		String build = String.valueOf(newBuild);
-		properties.setProperty(QM_KEY, build);
-	}
-
-	@Override
-	public String currentVersion() {
-		return String.valueOf(currentBuild);
-	}
-
-	@Override
-	public String updateVersion() {
-		return String.valueOf(newBuild);
 	}
 }

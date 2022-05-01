@@ -7,6 +7,8 @@ import com.google.gson.JsonObject;
 
 import com.google.gson.JsonParser;
 
+import io.github.tropheusj.auto_maintainer.updatables.builtin.MinecraftUpdatable;
+
 import org.gradle.api.Project;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -127,5 +129,9 @@ public abstract class Util {
 					name, expectedKey
 			));
 		}
+	}
+
+	public static String getMcVer(Config config) {
+		return config.getUpdatables().get(MinecraftUpdatable.UPDATABLE_KEY).updateVersion();
 	}
 }

@@ -3,7 +3,7 @@ package io.github.tropheusj.auto_maintainer.updatables;
 /**
  * How updating this dependency should be handled.
  */
-public enum UpdateType {
+public enum UpdateRequirement {
 	/**
 	 * This dependency is needed. If an update is not found, the build will fail.
 	 */

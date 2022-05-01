@@ -43,7 +43,7 @@ public interface Updatable {
 	/**
 	 * The UpdateType of this mod; determines what happens if unavailable at time of update.
 	 */
-	default UpdateType updateType() {
-		return UpdateType.REQUIRED_FOR_UPDATE;
+	default UpdateRequirement updateType() {
+		return UpdateRequirement.REQUIRED_FOR_UPDATE;
 	}
 }

@@ -2,7 +2,7 @@ package io.github.tropheusj.auto_maintainer;
 
 import io.github.tropheusj.auto_maintainer.updatables.Updatable;
 
-import io.github.tropheusj.auto_maintainer.updatables.UpdateType;
+import io.github.tropheusj.auto_maintainer.updatables.UpdateRequirement;
 import io.github.tropheusj.auto_maintainer.updatables.builtin.FabricLoaderUpdatable;
 import io.github.tropheusj.auto_maintainer.updatables.builtin.MinecraftUpdatable;
 import io.github.tropheusj.auto_maintainer.updatables.builtin.ModrinthUpdatable;
@@ -25,7 +25,7 @@ public abstract class Config {
 	public Config() {
 		// defaults
 		getUpdatables().put("Minecraft", new MinecraftUpdatable());
-		modrinth("Fabric API", "P7dR8mSH", "fabric_version", UpdateType.REQUIRED_FOR_UPDATE);
+		modrinth("Fabric API", "P7dR8mSH", "fabric_version", UpdateRequirement.REQUIRED_FOR_UPDATE);
 		getUpdatables().put("Quilt Mappings Build", new QuiltMappingsUpdatable());
 		getUpdatables().put("Fabric Loader", new FabricLoaderUpdatable());
 	}
@@ -41,27 +41,27 @@ public abstract class Config {
 	 * Depend on a mod from Modrinth that will be updated whenever available.
 	 */
 	public void modrinthUpdateIfAvailable(String name, String projectId) {
-		modrinth(name, projectId, UpdateType.UPDATE_IF_AVAILABLE);
+		modrinth(name, projectId, UpdateRequirement.UPDATE_IF_AVAILABLE);
 	}
 
 	/**
 	 * Depend on a mod from Modrinth that will be disabled whenever unavailable.
 	 */
 	public void modrinthDisableIfUnavailable(String name, String projectId) {
-		modrinth(name, projectId, UpdateType.DISABLE_IF_UNAVAILABLE);
+		modrinth(name, projectId, UpdateRequirement.DISABLE_IF_UNAVAILABLE);
 	}
 
 	/**
 	 * Depend on a mod from Modrinth that is absolutely required to successfully build.
 	 */
 	public void modrinthRequired(String name, String projectId) {
-		modrinth(name, projectId, UpdateType.REQUIRED_FOR_UPDATE);
+		modrinth(name, projectId, UpdateRequirement.REQUIRED_FOR_UPDATE);
 	}
 
 	/**
 	 * Depend on a mod from Modrinth with the specified UpdateType.
 	 */
-	public void modrinth(String name, String projectId, UpdateType type) {
+	public void modrinth(String name, String projectId, UpdateRequirement type) {
 		modrinth(name, projectId, Util.snakeCase(name) + "_version", type);
 	}
 
@@ -74,7 +74,7 @@ public abstract class Config {
 	 *                            to determine the version of this mod to use
 	 * @param type the UpdateType for this mod.
 	 */
-	public void modrinth(String name, String projectId, String gradlePropertiesKey, UpdateType type) {
+	public void modrinth(String name, String projectId, String gradlePropertiesKey, UpdateRequirement type) {
 		getUpdatables().put(name, new ModrinthUpdatable(name, projectId, gradlePropertiesKey, type));
 	}
 }

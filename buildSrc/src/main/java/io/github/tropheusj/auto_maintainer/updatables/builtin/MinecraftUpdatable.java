@@ -16,35 +16,29 @@ import javax.annotation.Nullable;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
-public class MinecraftUpdatable implements Updatable {
+public class MinecraftUpdatable extends GradlePropertiesBasedUpdatable {
 	public static final String UPDATABLE_KEY = "Minecraft";
 	public static final String MC_KEY = "minecraft_version";
 	public static final Pattern SNAPSHOT = Pattern.compile("([0-9]){2}(w)([0-9]){2}([a-z])");
 	public static final Pattern RELEASE = Pattern.compile("([0-9])(\\.)([0-9]){1,2}(\\.)([0-9]){1,2}");
-	public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
-	private JsonObject minecraftPatchNotes;
-	private JsonArray entries;
-	private String currentVersion;
-	private String newVersion;
 	private boolean needsUpdate;
+
+	public MinecraftUpdatable() {
+		super("Minecraft", MC_KEY);
+	}
 
 	@Override
 	public void initialize(Project project, Properties properties, Config config) {
-		currentVersion = properties.getProperty(MC_KEY);
-		minecraftPatchNotes = grabPatchNotes();
-		entries = minecraftPatchNotes.getAsJsonArray("entries");
+		super.initialize(project, properties, config);
+		JsonObject minecraftPatchNotes = grabPatchNotes();
+		JsonArray entries = minecraftPatchNotes.getAsJsonArray("entries");
 		JsonObject latestEntry = entries.get(0).getAsJsonObject();
 		newVersion = latestEntry.get("version").getAsString();
 		int currentIndex = findIndexOfVersion(currentVersion, entries);
 		if (currentIndex == -1)
 			throw new RuntimeException("Current MC version [" + currentVersion + "] could not be found in the patch notes!");
 		needsUpdate = currentIndex != 0;
-	}
-
-	@Override
-	public String currentVersion() {
-		return currentVersion;
 	}
 
 	@Nullable
@@ -56,11 +50,6 @@ public class MinecraftUpdatable implements Updatable {
 	@Override
 	public boolean hasUpdate() {
 		return needsUpdate;
-	}
-
-	@Override
-	public void update(Project project, Properties properties) {
-		properties.setProperty(MC_KEY, newVersion);
 	}
 
 	public static JsonObject grabPatchNotes() {

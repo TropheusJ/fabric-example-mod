@@ -6,52 +6,31 @@ import com.google.gson.JsonObject;
 
 import io.github.tropheusj.auto_maintainer.Config;
 import io.github.tropheusj.auto_maintainer.Util;
-import io.github.tropheusj.auto_maintainer.updatables.Updatable;
 
-import io.github.tropheusj.auto_maintainer.updatables.UpdateType;
+import io.github.tropheusj.auto_maintainer.updatables.UpdateRequirement;
 
 import org.gradle.api.Project;
 
 import java.util.Properties;
 
-public class FabricLoaderUpdatable implements Updatable {
+public class FabricLoaderUpdatable extends GradlePropertiesBasedUpdatable {
 	public static final String PROPERTY_KEY = "loader_version";
 	public static final String LOADER_META = "https://meta.fabricmc.net/v2/versions/loader/";
 
-	private String currentVersion;
-	private String newVersion;
+	public FabricLoaderUpdatable() {
+		super("Fabric Loader", PROPERTY_KEY);
+	}
 
 	@Override
 	public void initialize(Project project, Properties properties, Config config) {
-		currentVersion = properties.getProperty(PROPERTY_KEY);
-		Util.checkNull(currentVersion, "Fabric Loader", PROPERTY_KEY);
-		String mcVer = config.getUpdatables().get(MinecraftUpdatable.UPDATABLE_KEY).updateVersion();
+		super.initialize(project, properties, config);
+		String mcVer = Util.getMcVer(config);
 		newVersion = getNewVersion(mcVer);
 	}
 
 	@Override
-	public boolean hasUpdate() {
-		return !currentVersion.equals(newVersion);
-	}
-
-	@Override
-	public void update(Project project, Properties properties) {
-
-	}
-
-	@Override
-	public String currentVersion() {
-		return currentVersion;
-	}
-
-	@Override
-	public String updateVersion() {
-		return newVersion;
-	}
-
-	@Override
-	public UpdateType updateType() {
-		return UpdateType.UPDATE_IF_AVAILABLE;
+	public UpdateRequirement updateType() {
+		return UpdateRequirement.UPDATE_IF_AVAILABLE;
 	}
 
 	public static String getNewVersion(String mcVer) {

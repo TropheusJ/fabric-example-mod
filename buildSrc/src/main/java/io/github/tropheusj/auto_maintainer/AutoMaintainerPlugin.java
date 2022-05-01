@@ -2,7 +2,7 @@ package io.github.tropheusj.auto_maintainer;
 
 import io.github.tropheusj.auto_maintainer.updatables.Updatable;
 
-import io.github.tropheusj.auto_maintainer.updatables.UpdateType;
+import io.github.tropheusj.auto_maintainer.updatables.UpdateRequirement;
 import io.github.tropheusj.auto_maintainer.updatables.builtin.MinecraftUpdatable;
 
 import org.gradle.api.Plugin;
@@ -76,7 +76,7 @@ public class AutoMaintainerPlugin implements Plugin<Project> {
 			System.out.printf("updating %s from %s to %s\n", name, updatable.currentVersion(), updatable.updateVersion());
 			updatable.update(project, gradleProperties);
 		} else {
-			UpdateType type = updatable.updateType();
+			UpdateRequirement type = updatable.updateType();
 			switch (type) {
 				case UPDATE_IF_AVAILABLE ->
 						System.out.printf("%s up-to-date @ %s\n", name, updatable.currentVersion());
