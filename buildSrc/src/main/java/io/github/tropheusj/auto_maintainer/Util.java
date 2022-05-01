@@ -119,4 +119,13 @@ public abstract class Util {
 	public static String snakeCase(String string) {
 		return string.toLowerCase(Locale.ROOT).replace(" ", "_");
 	}
+
+	public static void checkNull(String property, String name, String expectedKey) {
+		if (property == null) {
+			throw new RuntimeException(String.format(
+					"'%s' could not find it's current version; Expected a key in gradle.properties matching '%s'\n",
+					name, expectedKey
+			));
+		}
+	}
 }

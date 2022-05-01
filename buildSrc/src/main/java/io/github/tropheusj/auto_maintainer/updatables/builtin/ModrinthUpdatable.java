@@ -37,12 +37,7 @@ public class ModrinthUpdatable implements Updatable {
 	@Override
 	public void initialize(Project project, Properties properties, Config config) {
 		currentVersion = properties.getProperty(gradlePropertiesKey);
-		if (currentVersion == null) {
-			throw new RuntimeException(String.format(
-					"'%s' could not find it's current version; Expected a key in gradle.properties matching '%s'\n",
-					name, gradlePropertiesKey
-			));
-		}
+		Util.checkNull(currentVersion, name, gradlePropertiesKey);
 		Updatable mc = config.getUpdatables().get(MinecraftUpdatable.UPDATABLE_KEY);
 		String mcVer = mc.updateVersion();
 		newVersion = findLatestFromMcVer(mcVer, projectId);

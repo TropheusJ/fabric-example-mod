@@ -3,6 +3,7 @@ package io.github.tropheusj.auto_maintainer;
 import io.github.tropheusj.auto_maintainer.updatables.Updatable;
 
 import io.github.tropheusj.auto_maintainer.updatables.UpdateType;
+import io.github.tropheusj.auto_maintainer.updatables.builtin.FabricLoaderUpdatable;
 import io.github.tropheusj.auto_maintainer.updatables.builtin.MinecraftUpdatable;
 import io.github.tropheusj.auto_maintainer.updatables.builtin.ModrinthUpdatable;
 import io.github.tropheusj.auto_maintainer.updatables.builtin.QuiltMappingsUpdatable;
@@ -26,6 +27,7 @@ public abstract class Config {
 		getUpdatables().put("Minecraft", new MinecraftUpdatable());
 		modrinth("Fabric API", "P7dR8mSH", "fabric_version", UpdateType.REQUIRED_FOR_UPDATE);
 		getUpdatables().put("Quilt Mappings Build", new QuiltMappingsUpdatable());
+		getUpdatables().put("Fabric Loader", new FabricLoaderUpdatable());
 	}
 
 	/**
