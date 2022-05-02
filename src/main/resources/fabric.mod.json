@@ -16,6 +16,9 @@
   "entrypoints": {
     "main": [
       "io.github.tropheusj.modid.ExampleMod"
+    ],
+    "fabric-gametest": [
+      "io.github.tropheusj.modid.test.ExampleModGameTest"
     ]
   },
   "mixins": [

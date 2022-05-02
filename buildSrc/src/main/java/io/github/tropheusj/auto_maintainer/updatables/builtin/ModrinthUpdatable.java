@@ -47,6 +47,16 @@ public class ModrinthUpdatable extends GradlePropertiesBasedUpdatable {
 			String type = version.get("version_type").getAsString();
 			if (!unstableAllowed && !type.equals("release"))
 				continue;
+			boolean supportsFabric = false;
+			JsonArray loaders = version.getAsJsonArray("loaders");
+			for (JsonElement loaderElement : loaders) {
+				String loader = loaderElement.getAsString();
+				if (loader.equals("fabric")) {
+					supportsFabric = true;
+				}
+			}
+			if (!supportsFabric)
+				continue;
 			for (JsonElement supported : supportedVersions) {
 				String asString = supported.getAsString();
 				if (asString.equals(mcVer)) {

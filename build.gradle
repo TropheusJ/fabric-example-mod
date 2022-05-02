@@ -43,9 +43,10 @@ dependencies {
 		}
 	}
 	modImplementation("net.fabricmc:fabric-loader:${project.loader_version}")
-	modLocalRuntime("maven.modrinth:lazydfu:0.1.2")
+	modLocalRuntime("maven.modrinth:lazydfu:${project.lazydfu_version}")
 	modLocalRuntime("maven.modrinth:suggestionproviderfabric:${project.suggestion_provider_fabric_version}")
-	modLocalRuntime("mcp.mobius.waila:wthit:fabric-${project.wthit_version}")
+	modLocalRuntime("mcp.mobius.waila:wthit:${project.wthit_version}")
+	modLocalRuntime("maven.modrinth:badpackets:${project.bad_packets_version}")
 	modLocalRuntime("maven.modrinth:sodium:${project.sodium_version}") // rendering beware
     localRuntime("org.joml:joml:1.10.4")
 	modLocalRuntime("maven.modrinth:lithium:${project.lithium_version}")
@@ -54,6 +55,18 @@ dependencies {
 
 	// dependencies
 	modImplementation("net.fabricmc.fabric-api:fabric-api:${project.fabric_version}")
+}
+
+loom {
+	runs {
+		gametest {
+			server()
+			name "Minecraft Test"
+			vmArg "-Dfabric-api.gametest"
+			vmArg "-Dfabric-api.gametest.report-file=${project.buildDir}/junit.xml"
+			runDir "build/gametest"
+		}
+	}
 }
 
 task buildOrPublish {
@@ -122,6 +135,7 @@ autoMaintainer {
 	modrinthUpdateIfAvailable("LazyDFU", "hvFnDODi")
 	modrinthUpdateIfAvailable("Suggestion Provider Fabric", "cz2CENBO")
 	modrinthDisableIfUnavailable("WTHIT", "6AQIaxuO")
+	modrinthDisableIfUnavailable("Bad Packets", "6AQIaxuO")
 	modrinthDisableIfUnavailable("Sodium", "AANobbMI")
 	modrinthDisableIfUnavailable("Lithium", "gvQqBUqZ")
 	modrinthDisableIfUnavailable("Iris", "YL57xq9U")
