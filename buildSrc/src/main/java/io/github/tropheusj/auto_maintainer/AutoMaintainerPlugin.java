@@ -1,5 +1,6 @@
 package io.github.tropheusj.auto_maintainer;
 
+import groovy.lang.Closure;
 import io.github.tropheusj.auto_maintainer.updatables.Updatable;
 
 import io.github.tropheusj.auto_maintainer.updatables.UpdateRequirement;
@@ -15,6 +16,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -26,8 +29,52 @@ public class AutoMaintainerPlugin implements Plugin<Project> {
 
 	@Override
 	public void apply(Project project) {
+		createGameTestTask(project);
 		Config config = project.getExtensions().create("autoMaintainer", Config.class);
-		project.task("tryUpdate", task -> task.doFirst(t -> tryUpdate(t, config)));
+		Task finalize = project.task("finalizeUpdate", task -> System.out.println("finalized")); // publish after successful tests
+		Task gametest = project.getTasks().getByName("runGametest");
+		Task update = project.task("tryUpdate", task -> task.doFirst(t -> tryUpdate(t, config))); // update
+		update.finalizedBy(gametest);
+		gametest.finalizedBy(finalize);
+	}
+
+	/**
+	 * Create runGametest task.
+	 * Jank since loom can't be compiled against and used in the project at the same time.
+	 */
+	public void createGameTestTask(Project project) {
+		Object loomConfig = project.getExtensions().getByName("loom");
+		try {
+			Method runs = loomConfig.getClass().getDeclaredMethod("runs", Closure.class);
+			Closure<?> closure = new Closure<>(this) {
+				private void doCall(Object container) {
+					try {
+						Method register = container.getClass().getDeclaredMethod("register", String.class, Closure.class);
+						Closure<?> closure = new Closure<>(this) {
+							private void doCall(Object runConfigSettings) {
+								Class<?> c = runConfigSettings.getClass();
+								try {
+									c.getDeclaredMethod("server").invoke(runConfigSettings);
+									c.getDeclaredMethod("name", String.class).invoke(runConfigSettings, "Minecraft Test");
+									Method vmArg = c.getDeclaredMethod("vmArg", String.class);
+									vmArg.invoke(runConfigSettings, "-Dfabric-api.gametest");
+									vmArg.invoke(runConfigSettings, "-Dfabric-api.gametest.report-file=${project.buildDir}/junit.xml");
+									c.getDeclaredMethod("runDir", String.class).invoke(runConfigSettings, "build/gametest");
+								} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+									throw new RuntimeException(e);
+								}
+							}
+						};
+						register.invoke(container, "gametest", closure);
+					} catch (Throwable t) {
+						throw new RuntimeException(t);
+					}
+				}
+			};
+			runs.invoke(loomConfig, closure);
+		} catch (Throwable t) {
+			throw new RuntimeException(t);
+		}
 	}
 
 	/**
@@ -39,10 +86,10 @@ public class AutoMaintainerPlugin implements Plugin<Project> {
 	 * Next, all dependencies will be updated. Depending on each dependency's
 	 * UpdateRequirement, the build will either fail or continue.
 	 *
-	 * // TODO: stage 3
-	 * Then, a build is tested. If the build is successful and gametest succeeds,
-	 * a build is published to mod hosting sites.
-	 * Otherwise, the partial work will be automatically published to a new
+	 *
+	 * Then, a build is tested. If the build is successful and gametest succeeds,// TODO: stage 3
+	 * a build is published to mod hosting sites.// TODO: stage 5
+	 * Otherwise, the partial work will be automatically published to a new // TODO: stage 4
 	 * git branch. A config file (automaintainer.properties) will be created if it
 	 * does not exist, and 'enabled' will be set to false, leaving the branch as-is
 	 * until a human can fix it.
@@ -50,9 +97,8 @@ public class AutoMaintainerPlugin implements Plugin<Project> {
 	public void tryUpdate(Task task, Config config) {
 		System.out.println("Trying to update...");
 		Project project = task.getProject();
-		Properties properties = Util.getOrCreateAutoMaintainerProperties(project);
-		boolean enabled = Boolean.parseBoolean(properties.getProperty("enabled"));
-		if (!enabled) {
+		AutoMaintainerProperties properties = new AutoMaintainerProperties(project);
+		if (!properties.enabled()) {
 			System.out.println("AutoMaintainer is not currently enabled.");
 			return;
 		}
@@ -76,6 +122,10 @@ public class AutoMaintainerPlugin implements Plugin<Project> {
 		disableInBuild(project);
 	}
 
+	/**
+	 * Handle an Updatable. Checks if it has an update, and updates it if so.
+	 * Otherwise, checks the UpdateRequirement and either fails, continues, or disables.
+	 */
 	public void handleUpdatable(Updatable updatable, String name, Project project, Properties gradleProperties, Config config) {
 		updatable.initialize(project, gradleProperties, config);
 		if (updatable.hasUpdate()) {
@@ -96,6 +146,9 @@ public class AutoMaintainerPlugin implements Plugin<Project> {
 		}
 	}
 
+	/**
+	 * Write the modified properties to the project root gradle.properties file.
+	 */
 	public void writeNewProperties(Properties properties, Project project) {
 		// we need to manually update properties since just storing it would discard all formatting.
 		File file = project.file("gradle.properties");
@@ -117,6 +170,11 @@ public class AutoMaintainerPlugin implements Plugin<Project> {
 		}
 	}
 
+	/**
+	 * Updates a line declaring a version of a dependency.
+	 * If the dependency was disabled, the line is commented.
+	 * If the dependency was updated, the version is updated.
+	 */
 	public String updatePropertiesLine(String line, Properties properties) {
 		if (!line.contains("="))
 			return line;
@@ -137,6 +195,9 @@ public class AutoMaintainerPlugin implements Plugin<Project> {
 		return line;
 	}
 
+	/**
+	 * Go through the project root build.gradle file and comment out any dependencies that were disabled.
+	 */
 	public void disableInBuild(Project project) {
 		File build = project.getBuildFile();
 		List<String> newData = new ArrayList<>();
@@ -157,6 +218,9 @@ public class AutoMaintainerPlugin implements Plugin<Project> {
 		}
 	}
 
+	/**
+	 * Add a comment to the start of the given line if the dependency it declares was disabled.
+	 */
 	public String updateBuildLine(String line) {
 		for (String disabled : toDisable) {
 			if (line.contains(disabled)) {

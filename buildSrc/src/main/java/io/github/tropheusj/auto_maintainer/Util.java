@@ -59,33 +59,6 @@ public abstract class Util {
 		return properties;
 	}
 
-	public static Properties getOrCreateAutoMaintainerProperties(Project project) {
-		File file = project.file("automaintainer.properties");
-		Properties properties = new Properties();
-		if (!file.exists()) {
-			// create and set defaults
-			try {
-				file.createNewFile();
-			} catch (IOException e) {
-				throw new RuntimeException("Failed to create automaintainer.properties file!", e);
-			}
-			properties.setProperty("enabled", "true");
-			try (FileOutputStream out = new FileOutputStream(file)) {
-				properties.store(out, " Properties controlling the behavior of AutoMaintainer.");
-			} catch (IOException e) {
-				throw new RuntimeException("Failed to save automaintainer.properties file!", e);
-			}
-			return properties;
-		} else {
-			try (FileInputStream in = new FileInputStream(file)) {
-				properties.load(in);
-				return properties;
-			} catch (IOException e) {
-				throw new RuntimeException("Failed to load automaintainer.properties file!");
-			}
-		}
-	}
-
 	public static String stringFromUrl(String url) {
 		HttpRequest request = HttpRequest.newBuilder()
 				.timeout(Duration.ofSeconds(20))

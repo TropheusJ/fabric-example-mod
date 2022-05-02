@@ -57,18 +57,6 @@ dependencies {
 	modImplementation("net.fabricmc.fabric-api:fabric-api:${project.fabric_version}")
 }
 
-loom {
-	runs {
-		gametest {
-			server()
-			name "Minecraft Test"
-			vmArg "-Dfabric-api.gametest"
-			vmArg "-Dfabric-api.gametest.report-file=${project.buildDir}/junit.xml"
-			runDir "build/gametest"
-		}
-	}
-}
-
 task buildOrPublish {
 	group = "build"
 	String mavenUser = System.getenv().MAVEN_USER
