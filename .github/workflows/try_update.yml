@@ -3,6 +3,7 @@ on:
   schedule:
     # run every day at 5:55 PM
     - cron: '55 17 * * *'
+  workflow_dispatch:
 
 jobs:
   build:
