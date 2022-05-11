@@ -59,7 +59,7 @@ public abstract class Config {
 	}
 
 	/**
-	 * Depend on a mod from Modrinth with the specified UpdateType.
+	 * Depend on a mod from Modrinth with the specified UpdateRequirement.
 	 */
 	public void modrinth(String name, String projectId, UpdateRequirement type) {
 		modrinth(name, projectId, Util.snakeCase(name) + "_version", type);

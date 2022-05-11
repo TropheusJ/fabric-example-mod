@@ -1,9 +1,8 @@
 name: try_update
 on:
   schedule:
-    # run every day at 5:00 PM
-    - cron: '0 17 * * *'
-  workflow_dispatch:
+    # run every day at 5:55 PM
+    - cron: '55 17 * * *'
 
 jobs:
   build:

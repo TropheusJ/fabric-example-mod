@@ -1,13 +1,10 @@
 package io.github.tropheusj.auto_maintainer.updatables.builtin;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import io.github.tropheusj.auto_maintainer.Config;
 import io.github.tropheusj.auto_maintainer.Util;
-import io.github.tropheusj.auto_maintainer.updatables.Updatable;
 
 import org.gradle.api.Project;
 
