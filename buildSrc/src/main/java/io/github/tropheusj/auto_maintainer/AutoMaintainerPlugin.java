@@ -17,7 +17,5 @@ public class AutoMaintainerPlugin implements Plugin<Project> {
 
 		Util.createGameTestTask(project);
 		Task gametest = project.getTasks().getByName("runGametest");
-
-		update.finalizedBy(gametest);
 	}
 }

@@ -1,8 +1,9 @@
 name: try_update
 on:
   schedule:
-    # run every day at 5:55 PM
-    - cron: '55 17 * * *'
+    # run every day at 6:23 PM
+    # weird time to avoid peak use
+    - cron: '23 18 * * *'
   workflow_dispatch:
 
 jobs:
@@ -24,6 +25,15 @@ jobs:
         with:
           java-version: ${{ matrix.java }}
 
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/loom-cache
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/gradle-wrapper.properties') }}
+          restore-keys: ${{ runner.os }}-gradle
+
       - name: make gradle wrapper executable
         run: chmod +x ./gradlew
 
@@ -31,5 +41,8 @@ jobs:
         run: ./gradlew tryUpdate
 
       # Must be a separate stage to allow deps to actually change
+      - name: gametest
+        run: ./gradlew runGametest
+
       - name: finalize update
         run: ./gradlew finalizeUpdate
