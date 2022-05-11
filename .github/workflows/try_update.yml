@@ -29,3 +29,7 @@ jobs:
 
       - name: update
         run: ./gradlew tryUpdate
+
+      # Must be a separate stage to allow deps to actually change
+      - name: finalize update
+        run: ./gradlew finalizeUpdate

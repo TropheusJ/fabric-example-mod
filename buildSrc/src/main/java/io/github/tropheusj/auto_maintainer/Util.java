@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 
 import com.google.gson.JsonParser;
 
+import groovy.lang.Closure;
 import io.github.tropheusj.auto_maintainer.updatables.builtin.MinecraftUpdatable;
 
 import org.gradle.api.Project;
@@ -27,6 +28,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpClient.Version;
@@ -106,5 +109,44 @@ public abstract class Util {
 
 	public static String getMcVer(Config config) {
 		return config.getUpdatables().get(MinecraftUpdatable.UPDATABLE_KEY).updateVersion();
+	}
+
+	/**
+	 * Create runGametest task.
+	 * Jank since loom can't be compiled against and used in the project at the same time.
+	 */
+	public static void createGameTestTask(Project project) {
+		Object loomConfig = project.getExtensions().getByName("loom");
+		try {
+			Method runs = loomConfig.getClass().getDeclaredMethod("runs", Closure.class);
+			Closure<?> closure = new Closure<>(new Object()) {
+				private void doCall(Object container) {
+					try {
+						Method register = container.getClass().getDeclaredMethod("register", String.class, Closure.class);
+						Closure<?> closure = new Closure<>(this) {
+							private void doCall(Object runConfigSettings) {
+								Class<?> c = runConfigSettings.getClass();
+								try {
+									c.getDeclaredMethod("server").invoke(runConfigSettings);
+									c.getDeclaredMethod("name", String.class).invoke(runConfigSettings, "Minecraft Test");
+									Method vmArg = c.getDeclaredMethod("vmArg", String.class);
+									vmArg.invoke(runConfigSettings, "-Dfabric-api.gametest");
+									vmArg.invoke(runConfigSettings, "-Dfabric-api.gametest.report-file=" + project.getBuildDir() + "/junit.xml");
+									c.getDeclaredMethod("runDir", String.class).invoke(runConfigSettings, "build/gametest");
+								} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+									throw new RuntimeException(e);
+								}
+							}
+						};
+						register.invoke(container, "gametest", closure);
+					} catch (Throwable t) {
+						throw new RuntimeException(t);
+					}
+				}
+			};
+			runs.invoke(loomConfig, closure);
+		} catch (Throwable t) {
+			throw new RuntimeException(t);
+		}
 	}
 }
