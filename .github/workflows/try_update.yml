@@ -46,4 +46,5 @@ jobs:
 
       # Must be a separate stage to not be cancelled if test fails
       - name: finalize update
+        if: always()
         run: ./gradlew finalizeUpdate
