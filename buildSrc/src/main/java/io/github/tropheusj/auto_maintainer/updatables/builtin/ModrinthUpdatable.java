@@ -32,6 +32,21 @@ public class ModrinthUpdatable extends GradlePropertiesBasedUpdatable {
 		super.initialize(project, properties, config);
 		String mcVer = Util.getMcVer(config);
 		JsonArray allVersions = Util.jsonFromUrl("https://api.modrinth.com/v2/project/" + projectId + "/version").getAsJsonArray();
+		checkNewVersion(allVersions, mcVer);
+		checkCurrentVersionFine(allVersions, mcVer);
+	}
+
+	@Override
+	public boolean currentVersionFine() {
+		return currentVersionFine;
+	}
+
+	@Override
+	public UpdateRequirement updateType() {
+		return type;
+	}
+
+	public void checkNewVersion(JsonArray allVersions, String mcVer) {
 		for (JsonElement element : allVersions) {
 			JsonObject version = element.getAsJsonObject();
 			if (!supportsLoader(version, false)) // todo: quilt
@@ -44,34 +59,27 @@ public class ModrinthUpdatable extends GradlePropertiesBasedUpdatable {
 				}
 			}
 		}
-		if (newVersion == null) {
+	}
+
+	public void checkCurrentVersionFine(JsonArray allVersions, String mcVer) {
+		if (!hasUpdate()) {
+			// did not find an update - find current version, see if it supports the target MC version
 			versions: for (JsonElement element : allVersions) {
 				JsonObject version = element.getAsJsonObject();
 				if (!supportsLoader(version, false)) // todo: quilt
 					continue;
-				// did not find an update - find current version, see if it supports the target MC version
-				if (currentVersion.equals(version.get("version_number").getAsString())) {
-					JsonArray supportedMcVersions = version.getAsJsonArray("game_versions");
-					for (JsonElement supported : supportedMcVersions) {
-						String asString = supported.getAsString();
-						if (asString.equals(mcVer)) {
-							currentVersionFine = true;
-							break versions;
-						}
+				if (!currentVersion.equals(version.get("version_number").getAsString()))
+					continue;
+				JsonArray supportedMcVersions = version.getAsJsonArray("game_versions");
+				for (JsonElement supported : supportedMcVersions) {
+					String asString = supported.getAsString();
+					if (asString.equals(mcVer)) {
+						currentVersionFine = true;
+						break versions;
 					}
 				}
 			}
 		}
-	}
-
-	@Override
-	public boolean currentVersionFine() {
-		return currentVersionFine;
-	}
-
-	@Override
-	public UpdateRequirement updateType() {
-		return type;
 	}
 
 	public static boolean supportsLoader(JsonObject modVersion, boolean quilt) {
