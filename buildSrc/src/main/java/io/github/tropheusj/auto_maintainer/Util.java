@@ -2,6 +2,7 @@ package io.github.tropheusj.auto_maintainer;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -13,9 +14,6 @@ import io.github.tropheusj.auto_maintainer.updatables.builtin.MinecraftUpdatable
 import org.gradle.api.Project;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -25,8 +23,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -109,6 +105,34 @@ public abstract class Util {
 
 	public static String getMcVer(Config config) {
 		return config.getUpdatables().get(MinecraftUpdatable.UPDATABLE_KEY).updateVersion();
+	}
+
+	public static String getVersionTarget(String version) {
+		JsonObject versionManifest = MinecraftUpdatable.grabManifest();
+		JsonArray versions = versionManifest.getAsJsonArray("versions");
+		for (JsonElement element : versions) {
+			JsonObject entry = element.getAsJsonObject();
+			String id = entry.get("id").getAsString();
+			if (!version.equals(id))
+				continue;
+			String dataUrl = entry.get("url").getAsString();
+			JsonObject data = Util.jsonFromUrl(dataUrl).getAsJsonObject();
+			return data.get("assets").getAsString();
+		}
+		throw new RuntimeException("Could not find version in manifest:" + version);
+	}
+
+	public static String versionToSemver(String version) {
+		String target = getVersionTarget(version);
+		if (version.equals(target))
+			return version;
+		String year = version.substring(0, 2);
+		String week = version.substring(3, 5);
+		String end = version.substring(5);
+		String format = "%s-alpha.%s.%s.%s";
+		if (!MinecraftUpdatable.SNAPSHOT.matcher(version).find())
+			format = "%s-%s.w.%s.%s"; // special snapshots are different because yes
+		return String.format(format, target, year, week, end);
 	}
 
 	/**

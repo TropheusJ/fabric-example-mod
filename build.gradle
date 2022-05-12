@@ -1,4 +1,5 @@
 import io.github.tropheusj.auto_maintainer.AutoMaintainerPlugin
+import io.github.tropheusj.auto_maintainer.Util
 
 //file:noinspection GroovyAssignabilityCheck
 //file:noinspection GroovyAccessibility
@@ -74,7 +75,7 @@ processResources {
 	properties.put("version", project.version)
 	properties.put("loader_version", project.loader_version)
 	properties.put("fabric_version", project.fabric_version)
-	properties.put("minecraft_version", project.minecraft_version)
+	properties.put("minecraft_version", Util.versionToSemver(project.minecraft_version))
 	properties.put("java_version", sourceCompatibility)
 
 	properties.forEach((k, v) -> inputs.property(k, v))

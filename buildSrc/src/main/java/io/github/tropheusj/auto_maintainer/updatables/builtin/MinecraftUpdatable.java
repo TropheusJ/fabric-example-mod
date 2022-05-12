@@ -20,6 +20,7 @@ public class MinecraftUpdatable extends GradlePropertiesBasedUpdatable {
 	public static final Pattern RELEASE = Pattern.compile("([0-9])(\\.)([0-9]){1,2}(\\.)([0-9]){1,2}");
 
 	private boolean needsUpdate;
+	private String targetVersion; // the target for snapshots, ex. 22w18a -> 1.19. for releases, is identical to newVersion.
 
 	public MinecraftUpdatable() {
 		super("Minecraft", MC_KEY);
@@ -28,14 +29,18 @@ public class MinecraftUpdatable extends GradlePropertiesBasedUpdatable {
 	@Override
 	public void initialize(Project project, Properties properties, Config config) {
 		super.initialize(project, properties, config);
-		JsonObject minecraftPatchNotes = grabPatchNotes();
-		JsonArray entries = minecraftPatchNotes.getAsJsonArray("entries");
-		JsonObject latestEntry = entries.get(0).getAsJsonObject();
-		newVersion = latestEntry.get("version").getAsString();
-		int currentIndex = findIndexOfVersion(currentVersion, entries);
+		JsonObject versionManifest = grabManifest();
+		JsonArray versions = versionManifest.getAsJsonArray("versions");
+		JsonObject latestEntry = versions.get(0).getAsJsonObject();
+		newVersion = latestEntry.get("id").getAsString();
+		int currentIndex = findIndexOfVersion(currentVersion, versions);
 		if (currentIndex == -1)
 			throw new RuntimeException("Current MC version [" + currentVersion + "] could not be found in the patch notes!");
 		needsUpdate = currentIndex != 0;
+
+		String dataUrl = latestEntry.get("url").getAsString();
+		JsonObject data = Util.jsonFromUrl(dataUrl).getAsJsonObject();
+		targetVersion = data.get("assets").getAsString();
 	}
 
 	@Nullable
@@ -44,19 +49,23 @@ public class MinecraftUpdatable extends GradlePropertiesBasedUpdatable {
 		return needsUpdate ? newVersion : currentVersion;
 	}
 
+	public String targetVersion() {
+		return targetVersion;
+	}
+
 	@Override
 	public boolean hasUpdate() {
 		return needsUpdate;
 	}
 
-	public static JsonObject grabPatchNotes() {
-		return Util.jsonFromUrl("https://launchercontent.mojang.com/javaPatchNotes.json").getAsJsonObject();
+	public static JsonObject grabManifest() {
+		return Util.jsonFromUrl("http://launchermeta.mojang.com/mc/game/version_manifest.json").getAsJsonObject();
 	}
 
 	public static int findIndexOfVersion(String mcVer, JsonArray entries) {
 		for (int i = 0; i < entries.size(); i++) {
 			JsonObject entry = entries.get(i).getAsJsonObject();
-			String version = entry.get("version").getAsString();
+			String version = entry.get("id").getAsString();
 			if (mcVer.equals(version)) {
 				return i;
 			}
