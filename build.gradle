@@ -121,7 +121,7 @@ publishing {
 
 autoMaintainer {
 	modrinthUpdateIfAvailable("LazyDFU", "hvFnDODi")
-	modrinthUpdateIfAvailable("Suggestion Provider Fabric", "cz2CENBO")
+	modrinthDisableIfUnavailable("Suggestion Provider Fabric", "cz2CENBO")
 	modrinthDisableIfUnavailable("WTHIT", "6AQIaxuO")
 	modrinthDisableIfUnavailable("Bad Packets", "ftdbN0KK")
 	modrinthDisableIfUnavailable("Sodium", "AANobbMI")
