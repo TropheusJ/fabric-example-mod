@@ -85,10 +85,14 @@ public class TryUpdateTask {
 				case UPDATE_IF_AVAILABLE ->
 						System.out.printf("%s up-to-date @ %s\n", name, updatable.currentVersion());
 				case REQUIRED_FOR_UPDATE ->
-						throw new RuntimeException(String.format("Mandatory dependency [%s] did not have an update available!", name));
+						throw new RuntimeException(String.format("Required dependency [%s] did not have an update available!", name));
 				case DISABLE_IF_UNAVAILABLE -> {
-					updatable.disable(project, gradleProperties);
-					System.out.printf("Disabled %s; needs update, but no update is available.\n", name);
+					if (updatable.currentVersionFine()) {
+						System.out.printf("%s up-to-date @ %s\n", name, updatable.currentVersion());
+					} else {
+						updatable.disable(project, gradleProperties);
+						System.out.printf("Disabled %s; needs update, but no update is available.\n", name);
+					}
 				}
 			}
 		}

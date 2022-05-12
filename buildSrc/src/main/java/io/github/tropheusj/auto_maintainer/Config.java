@@ -13,6 +13,7 @@ import java.util.Map;
 
 public abstract class Config {
 	private LinkedHashMap<String, Updatable> updatables = new LinkedHashMap<>();
+	private boolean quilt;
 
 	public Map<String, Updatable> getUpdatables() {
 		return updatables;
@@ -20,6 +21,18 @@ public abstract class Config {
 
 	public void setUpdatables(LinkedHashMap<String, Updatable> updatables) {
 		this.updatables = updatables;
+	}
+
+	/**
+	 * This project is quilt-based, not fabric-based.
+	 * // TODO quilt
+	 */
+	public void quilt() {
+		quilt = true;
+	}
+
+	public boolean isQuilt() {
+		return quilt;
 	}
 
 	public Config() {

@@ -17,6 +17,5 @@ public class AutoMaintainerPlugin implements Plugin<Project> {
 
 		Util.createGameTestTask(project);
 		Task gametest = project.getTasks().getByName("runGametest");
-		System.out.println(Util.versionToSemver("22w18a"));
 	}
 }

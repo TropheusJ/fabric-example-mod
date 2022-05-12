@@ -24,6 +24,14 @@ public interface Updatable {
 	boolean hasUpdate();
 
 	/**
+	 * Sometimes, a dependency does not need an update to work on a new version.
+	 * @return true if the current version can be used safely.
+	 */
+	default boolean currentVersionFine() {
+		return false;
+	}
+
+	/**
 	 * Actually update this dependency.
 	 * @param project the entire Gradle project
 	 * @param properties a Properties representing the project's root gradle.properties file

@@ -19,6 +19,7 @@ import java.util.Properties;
 public class ModrinthUpdatable extends GradlePropertiesBasedUpdatable {
 	private final String projectId;
 	private final UpdateRequirement type;
+	private boolean currentVersionFine;
 
 	public ModrinthUpdatable(String name, String projectId, String gradlePropertiesKey, UpdateRequirement type) {
 		super(name, gradlePropertiesKey);
@@ -30,30 +31,47 @@ public class ModrinthUpdatable extends GradlePropertiesBasedUpdatable {
 	public void initialize(Project project, Properties properties, Config config) {
 		super.initialize(project, properties, config);
 		String mcVer = Util.getMcVer(config);
-		newVersion = findLatestFromMcVer(mcVer, projectId);
-	}
-
-	@Override
-	public UpdateRequirement updateType() {
-		return type;
-	}
-
-	public static String findLatestFromMcVer(String mcVer, String projectId) {
 		JsonArray allVersions = Util.jsonFromUrl("https://api.modrinth.com/v2/project/" + projectId + "/version").getAsJsonArray();
 		for (JsonElement element : allVersions) {
 			JsonObject version = element.getAsJsonObject();
-
 			if (!supportsLoader(version, false)) // todo: quilt
 				continue;
 			JsonArray supportedMcVersions = version.getAsJsonArray("game_versions");
 			for (JsonElement supported : supportedMcVersions) {
 				String asString = supported.getAsString();
 				if (asString.equals(mcVer)) {
-					return version.get("version_number").getAsString();
+					newVersion = version.get("version_number").getAsString();
 				}
 			}
 		}
-		return null;
+		if (newVersion == null) {
+			versions: for (JsonElement element : allVersions) {
+				JsonObject version = element.getAsJsonObject();
+				if (!supportsLoader(version, false)) // todo: quilt
+					continue;
+				// did not find an update - find current version, see if it supports the target MC version
+				if (currentVersion.equals(version.get("version_number").getAsString())) {
+					JsonArray supportedMcVersions = version.getAsJsonArray("game_versions");
+					for (JsonElement supported : supportedMcVersions) {
+						String asString = supported.getAsString();
+						if (asString.equals(mcVer)) {
+							currentVersionFine = true;
+							break versions;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	@Override
+	public boolean currentVersionFine() {
+		return currentVersionFine;
+	}
+
+	@Override
+	public UpdateRequirement updateType() {
+		return type;
 	}
 
 	public static boolean supportsLoader(JsonObject modVersion, boolean quilt) {

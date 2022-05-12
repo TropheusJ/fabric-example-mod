@@ -30,6 +30,11 @@ public class QuiltMappingsUpdatable extends GradlePropertiesBasedUpdatable {
 		newVersion = String.valueOf(findLatestBuild(mcVer));
 	}
 
+	@Override
+	public boolean currentVersionFine() {
+		return true; // if no supported version is found, an exception is thrown, so this is always fine
+	}
+
 	public static int findLatestBuild(String mcVer) {
 		JsonArray allVersions = Util.jsonFromUrl(QM_META).getAsJsonArray();
 		List<JsonObject> candidates = new LinkedList<>();
