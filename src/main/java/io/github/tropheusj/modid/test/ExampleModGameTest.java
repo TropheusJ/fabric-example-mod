@@ -10,7 +10,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
 public class ExampleModGameTest implements FabricGameTest {
 	@GameTest(template = EMPTY_STRUCTURE)
 	public void autoMaintainerInfoPrinter(GameTestHelper helper) {
-		helper.succeed();
+		helper.fail("a");
 		WorldVersion version = SharedConstants.getCurrentVersion();
 		String name = version.getName();
 		String target = version.getReleaseTarget();

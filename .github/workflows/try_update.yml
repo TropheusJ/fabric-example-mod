@@ -41,8 +41,9 @@ jobs:
         run: ./gradlew tryUpdate
 
       # Must be a separate stage to allow deps to actually change
-      - name: gametest
+      - name: test update
         run: ./gradlew runGametest
 
+      # Must be a separate stage to not be cancelled if test fails
       - name: finalize update
         run: ./gradlew finalizeUpdate
