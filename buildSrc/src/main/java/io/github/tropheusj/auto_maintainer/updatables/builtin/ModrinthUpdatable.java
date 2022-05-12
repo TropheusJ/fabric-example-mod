@@ -40,24 +40,13 @@ public class ModrinthUpdatable extends GradlePropertiesBasedUpdatable {
 
 	public static String findLatestFromMcVer(String mcVer, String projectId) {
 		JsonArray allVersions = Util.jsonFromUrl("https://api.modrinth.com/v2/project/" + projectId + "/version").getAsJsonArray();
-		boolean unstableAllowed = !MinecraftUpdatable.RELEASE.matcher(mcVer).find();
 		for (JsonElement element : allVersions) {
 			JsonObject version = element.getAsJsonObject();
-			JsonArray supportedVersions = version.getAsJsonArray("game_versions");
-			String type = version.get("version_type").getAsString();
-			if (!unstableAllowed && !type.equals("release"))
+
+			if (!supportsLoader(version, false)) // todo: quilt
 				continue;
-			boolean supportsFabric = false;
-			JsonArray loaders = version.getAsJsonArray("loaders");
-			for (JsonElement loaderElement : loaders) {
-				String loader = loaderElement.getAsString();
-				if (loader.equals("fabric")) {
-					supportsFabric = true;
-				}
-			}
-			if (!supportsFabric)
-				continue;
-			for (JsonElement supported : supportedVersions) {
+			JsonArray supportedMcVersions = version.getAsJsonArray("game_versions");
+			for (JsonElement supported : supportedMcVersions) {
 				String asString = supported.getAsString();
 				if (asString.equals(mcVer)) {
 					return version.get("version_number").getAsString();
@@ -65,5 +54,16 @@ public class ModrinthUpdatable extends GradlePropertiesBasedUpdatable {
 			}
 		}
 		return null;
+	}
+
+	public static boolean supportsLoader(JsonObject modVersion, boolean quilt) {
+		JsonArray loaders = modVersion.getAsJsonArray("loaders");
+		for (JsonElement loaderElement : loaders) {
+			String loader = loaderElement.getAsString();
+			if (loader.equals("fabric") || (quilt && loader.equals("quilt"))) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

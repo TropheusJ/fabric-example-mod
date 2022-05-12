@@ -123,7 +123,7 @@ autoMaintainer {
 	modrinthUpdateIfAvailable("LazyDFU", "hvFnDODi")
 	modrinthUpdateIfAvailable("Suggestion Provider Fabric", "cz2CENBO")
 	modrinthDisableIfUnavailable("WTHIT", "6AQIaxuO")
-	modrinthDisableIfUnavailable("Bad Packets", "6AQIaxuO")
+	modrinthDisableIfUnavailable("Bad Packets", "ftdbN0KK")
 	modrinthDisableIfUnavailable("Sodium", "AANobbMI")
 	modrinthDisableIfUnavailable("Lithium", "gvQqBUqZ")
 	modrinthDisableIfUnavailable("Iris", "YL57xq9U")
