@@ -36,6 +36,7 @@ import java.util.Properties;
  */
 public class TryUpdateTask {
 	public TryUpdateTask(Task task, Config config) {
+		System.out.println("try update init");
 		task.doFirst(t -> tryUpdate(t, config));
 	}
 

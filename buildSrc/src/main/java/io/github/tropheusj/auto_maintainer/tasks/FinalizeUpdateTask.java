@@ -17,6 +17,7 @@ import org.gradle.api.Task;
  */
 public class FinalizeUpdateTask {
 	public FinalizeUpdateTask(Task task, Config config) {
+		System.out.println("finalize update init");
 		task.doFirst(t -> finalizeUpdate(t, config));
 	}
 
