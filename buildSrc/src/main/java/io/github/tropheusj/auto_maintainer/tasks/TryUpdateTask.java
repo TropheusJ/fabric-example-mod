@@ -3,6 +3,7 @@ package io.github.tropheusj.auto_maintainer.tasks;
 import io.github.tropheusj.auto_maintainer.AutoMaintainerProperties;
 import io.github.tropheusj.auto_maintainer.Config;
 
+import io.github.tropheusj.auto_maintainer.StaticTest;
 import io.github.tropheusj.auto_maintainer.Util;
 import io.github.tropheusj.auto_maintainer.updatables.Updatable;
 import io.github.tropheusj.auto_maintainer.updatables.UpdateRequirement;
@@ -37,6 +38,8 @@ import java.util.Properties;
 public class TryUpdateTask {
 	public TryUpdateTask(Task task, Config config) {
 		System.out.println("try update init");
+		StaticTest.i++;
+		System.out.println(StaticTest.i);
 		task.doFirst(t -> tryUpdate(t, config));
 	}
 

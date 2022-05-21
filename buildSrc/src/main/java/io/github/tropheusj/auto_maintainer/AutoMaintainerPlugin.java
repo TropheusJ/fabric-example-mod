@@ -11,6 +11,8 @@ public class AutoMaintainerPlugin implements Plugin<Project> {
 	@Override
 	public void apply(Project project) {
 		System.out.println("plugin init");
+		StaticTest.i++;
+		System.out.println(StaticTest.i);
 		Config config = project.getExtensions().create("autoMaintainer", Config.class);
 
 		Task update = project.task("tryUpdate", t -> new TryUpdateTask(t, config));
