@@ -48,3 +48,5 @@ jobs:
       - name: finalize update
         if: always()
         run: ./gradlew finalizeUpdate
+        env:
+          ACTION_STATUS: ${{ github.action_status }}

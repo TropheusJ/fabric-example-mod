@@ -17,9 +17,20 @@ import org.gradle.api.Task;
  */
 public class FinalizeUpdateTask {
 	public FinalizeUpdateTask(Task task, Config config) {
-		// todo
-		task.doFirst((t) -> {
-			System.out.println("finalized update");
-		});
+		task.doFirst(t -> finalizeUpdate(t, config));
+	}
+
+	public void finalizeUpdate(Task task, Config config) {
+		boolean success = checkSuccess(task);
+		pushCode(config);
+	}
+
+	public boolean checkSuccess(Task task) {
+		System.out.println(System.getenv("ACTION_STATUS"));
+		return false;
+	}
+
+	public void pushCode(Config config) {
+
 	}
 }
