@@ -13,6 +13,7 @@ import org.eclipse.jgit.api.PushCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.internal.storage.file.FileRepository;
 import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.transport.RefSpec;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
@@ -62,7 +63,7 @@ public class FinalizeUpdateTask {
 	 * @return true if successful
 	 */
 	public boolean pushCode(Config config, Project project) {
-		try (Repository repo = new FileRepository(project.getRootDir()); Git git = new Git(repo)) {
+		try (Repository repo = new FileRepositoryBuilder().setGitDir(project.getProjectDir().toPath().resolve(".git").toFile()).build(); Git git = new Git(repo)) {
 			BranchCreationMode mode = config.getBranchCreationMode();
 			git.add()
 					.addFilepattern(AutoMaintainerProperties.NAME) // should be the only new file
