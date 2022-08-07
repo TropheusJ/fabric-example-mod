@@ -9,9 +9,11 @@ import io.github.tropheusj.auto_maintainer.Util;
 import io.github.tropheusj.auto_maintainer.minecraft.Minecraft;
 
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.PushCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.internal.storage.file.FileRepository;
 import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.transport.RefSpec;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
 
@@ -62,16 +64,6 @@ public class FinalizeUpdateTask {
 	public boolean pushCode(Config config, Project project) {
 		try (Repository repo = new FileRepository(project.getRootDir()); Git git = new Git(repo)) {
 			BranchCreationMode mode = config.getBranchCreationMode();
-			if (shouldBranch(mode)) {
-				String format = config.getBranchFormat();
-				String branchName = format.formatted(Util.getMcVer());
-				git.branchCreate()
-						.setName(branchName)
-						.call();
-				git.checkout()
-						.setName(branchName)
-						.call();
-			}
 			git.add()
 					.addFilepattern(AutoMaintainerProperties.NAME) // should be the only new file
 					.call();
@@ -80,6 +72,14 @@ public class FinalizeUpdateTask {
 					.setMessage("Automaintainer - update to: " + Util.getMcVer())
 					.setAuthor("Automaintainer", "<>")
 					.call();
+			PushCommand push = git.push();
+			if (shouldBranch(mode)) {
+				String format = config.getBranchFormat();
+				String branchName = format.formatted(Util.getMcVer());
+				RefSpec refSpec = new RefSpec("refs/heads/" + branchName);
+				push.setRefSpecs(refSpec);
+			}
+			push.call();
 			return true;
 		} catch (IOException | GitAPIException e) {
 			System.out.println("Error pushing updated code!");
