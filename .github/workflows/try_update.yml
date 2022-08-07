@@ -16,7 +16,6 @@ jobs:
       PUBLISH_SUFFIX: snapshots
       MAVEN_USER: ${{ secrets.MAVEN_USER }}
       MAVEN_PASS: ${{ secrets.MAVEN_PASS }}
-    permissions: write-all
     steps:
       - name: checkout repository
         uses: actions/checkout@v2
@@ -52,4 +51,4 @@ jobs:
         env:
           GH_ACTION_STATUS: ${{ github.action_status }}
           GH_ACTION_REPOSITORY: ${{ github.repository }}
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.AUTOMAINTAINER_TOKEN }}
