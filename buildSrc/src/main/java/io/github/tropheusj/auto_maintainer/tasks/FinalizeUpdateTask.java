@@ -90,7 +90,7 @@ public class FinalizeUpdateTask {
 			}
 			push.call();
 			if (branchName != null) {
-				updateDefaultBranch(config, project, branchName);
+				updateDefaultBranch(branchName);
 			}
 			return true;
 		} catch (Exception e) {
@@ -111,7 +111,7 @@ public class FinalizeUpdateTask {
 		};
 	}
 
-	private void updateDefaultBranch(Config config, Project project, String branchName) {
+	private void updateDefaultBranch(String branchName) {
 		String[] repo = System.getenv("GH_ACTION_REPOSITORY").split("/");
 		String owner = repo[0];
 		String repoName = repo[1];
@@ -127,7 +127,7 @@ public class FinalizeUpdateTask {
 						""".formatted(branchName)))
 				.build();
 		try {
-			System.out.println("github api response: " + Util.HTTP_CLIENT.send(request, BodyHandlers.ofString()).body());
+			System.out.println("github api response: " + Util.HTTP_CLIENT.send(request, BodyHandlers.ofString()).statusCode());
 		} catch (IOException | InterruptedException e) {
 			throw new RuntimeException(e);
 		}
