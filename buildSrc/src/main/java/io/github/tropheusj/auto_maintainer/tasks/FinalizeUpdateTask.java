@@ -76,7 +76,8 @@ public class FinalizeUpdateTask {
 			if (shouldBranch(mode)) {
 				String format = config.getBranchFormat();
 				String branchName = format.formatted(Util.getMcVer());
-				RefSpec refSpec = new RefSpec("refs/heads/" + branchName);
+				String currentBranchName = repo.getFullBranch();
+				RefSpec refSpec = new RefSpec(currentBranchName + ":" + branchName);
 				push.setRefSpecs(refSpec);
 			}
 			push.call();
