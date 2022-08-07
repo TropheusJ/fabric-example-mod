@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpRequest;
 import java.net.http.HttpRequest.BodyPublishers;
+import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 
 /**
@@ -127,7 +128,13 @@ public class FinalizeUpdateTask {
 						""".formatted(branchName)))
 				.build();
 		try {
-			System.out.println("github api response: " + Util.HTTP_CLIENT.send(request, BodyHandlers.ofString()).statusCode());
+			HttpResponse<String> response = Util.HTTP_CLIENT.send(request, BodyHandlers.ofString());
+			if (response.statusCode() == 200) {
+				System.out.println("Successfully updated the default branch to: " + branchName);
+			} else {
+				System.out.println("Error updating the default branch, code " + response.statusCode());
+				System.out.println(response.body());
+			}
 		} catch (IOException | InterruptedException e) {
 			throw new RuntimeException(e);
 		}
