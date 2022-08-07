@@ -9,7 +9,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import groovy.lang.Closure;
-import io.github.tropheusj.auto_maintainer.updatables.builtin.MinecraftUpdatable;
+
+import io.github.tropheusj.auto_maintainer.minecraft.Minecraft;
 
 import org.gradle.api.Project;
 import org.w3c.dom.Document;
@@ -103,14 +104,12 @@ public abstract class Util {
 		}
 	}
 
-	public static String getMcVer(Config config) {
-		return config.getUpdatables().get(MinecraftUpdatable.UPDATABLE_KEY).updateVersion();
+	public static String getMcVer() {
+		return Minecraft.INSTANCE.versions.newVer();
 	}
 
 	public static String getVersionTarget(String version) {
-		JsonObject versionManifest = MinecraftUpdatable.grabManifest();
-		JsonArray versions = versionManifest.getAsJsonArray("versions");
-		for (JsonElement element : versions) {
+		for (JsonElement element : Minecraft.INSTANCE.manifest.versions) {
 			JsonObject entry = element.getAsJsonObject();
 			String id = entry.get("id").getAsString();
 			if (!version.equals(id))
@@ -130,7 +129,7 @@ public abstract class Util {
 		String week = version.substring(3, 5);
 		String end = version.substring(5);
 		String format = "%s-alpha.%s.%s.%s";
-		if (!MinecraftUpdatable.SNAPSHOT.matcher(version).find())
+		if (!Minecraft.SNAPSHOT.matcher(version).find())
 			format = "%s-%s.w.%s.%s"; // special snapshots are different because yes
 		return String.format(format, target, year, week, end);
 	}

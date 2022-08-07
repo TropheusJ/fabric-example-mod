@@ -30,7 +30,7 @@ public class ModrinthUpdatable extends GradlePropertiesBasedUpdatable {
 	@Override
 	public void initialize(Project project, Properties properties, Config config) {
 		super.initialize(project, properties, config);
-		String mcVer = Util.getMcVer(config);
+		String mcVer = Util.getMcVer();
 		JsonArray allVersions = Util.jsonFromUrl("https://api.modrinth.com/v2/project/" + projectId + "/version").getAsJsonArray();
 		checkNewVersion(allVersions, mcVer);
 		checkCurrentVersionFine(allVersions, mcVer);

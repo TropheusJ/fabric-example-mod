@@ -4,16 +4,15 @@ import io.github.tropheusj.auto_maintainer.updatables.Updatable;
 
 import io.github.tropheusj.auto_maintainer.updatables.UpdateRequirement;
 import io.github.tropheusj.auto_maintainer.updatables.builtin.FabricLoaderUpdatable;
-import io.github.tropheusj.auto_maintainer.updatables.builtin.MinecraftUpdatable;
 import io.github.tropheusj.auto_maintainer.updatables.builtin.ModrinthUpdatable;
 import io.github.tropheusj.auto_maintainer.updatables.builtin.QuiltMappingsUpdatable;
 
+import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 public abstract class Config {
 	private LinkedHashMap<String, Updatable> updatables = new LinkedHashMap<>();
-	private boolean quilt;
 
 	public Map<String, Updatable> getUpdatables() {
 		return updatables;
@@ -22,6 +21,8 @@ public abstract class Config {
 	public void setUpdatables(LinkedHashMap<String, Updatable> updatables) {
 		this.updatables = updatables;
 	}
+
+	private boolean quilt;
 
 	/**
 	 * This project is quilt-based, not fabric-based.
@@ -37,7 +38,6 @@ public abstract class Config {
 
 	public Config() {
 		// defaults
-		getUpdatables().put("Minecraft", new MinecraftUpdatable());
 		modrinth("Fabric API", "P7dR8mSH", "fabric_version", UpdateRequirement.REQUIRED_FOR_UPDATE);
 		getUpdatables().put("Quilt Mappings Build", new QuiltMappingsUpdatable());
 		getUpdatables().put("Fabric Loader", new FabricLoaderUpdatable());

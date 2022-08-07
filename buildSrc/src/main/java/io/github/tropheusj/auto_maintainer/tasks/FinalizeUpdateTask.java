@@ -2,8 +2,6 @@ package io.github.tropheusj.auto_maintainer.tasks;
 
 import io.github.tropheusj.auto_maintainer.Config;
 
-import io.github.tropheusj.auto_maintainer.StaticTest;
-
 import org.gradle.api.Task;
 
 /**
@@ -19,9 +17,6 @@ import org.gradle.api.Task;
  */
 public class FinalizeUpdateTask {
 	public FinalizeUpdateTask(Task task, Config config) {
-		System.out.println("finalize update init");
-		StaticTest.i++;
-		System.out.println(StaticTest.i);
 		task.doFirst(t -> finalizeUpdate(t, config));
 	}
 

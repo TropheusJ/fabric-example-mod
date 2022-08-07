@@ -3,12 +3,11 @@ package io.github.tropheusj.auto_maintainer.tasks;
 import io.github.tropheusj.auto_maintainer.AutoMaintainerProperties;
 import io.github.tropheusj.auto_maintainer.Config;
 
-import io.github.tropheusj.auto_maintainer.StaticTest;
 import io.github.tropheusj.auto_maintainer.Util;
+import io.github.tropheusj.auto_maintainer.minecraft.Minecraft;
 import io.github.tropheusj.auto_maintainer.updatables.Updatable;
 import io.github.tropheusj.auto_maintainer.updatables.UpdateRequirement;
 import io.github.tropheusj.auto_maintainer.updatables.builtin.GradlePropertiesBasedUpdatable;
-import io.github.tropheusj.auto_maintainer.updatables.builtin.MinecraftUpdatable;
 
 import org.gradle.api.Project;
 import org.gradle.api.Task;
@@ -37,9 +36,6 @@ import java.util.Properties;
  */
 public class TryUpdateTask {
 	public TryUpdateTask(Task task, Config config) {
-		System.out.println("try update init");
-		StaticTest.i++;
-		System.out.println(StaticTest.i);
 		task.doFirst(t -> tryUpdate(t, config));
 	}
 
@@ -54,21 +50,17 @@ public class TryUpdateTask {
 		}
 
 		Properties gradleProperties = Util.getGradleProperties(project);
-		Map<String, Updatable> updatables = config.getUpdatables();
-		Updatable mc = updatables.get(MinecraftUpdatable.UPDATABLE_KEY);
-		mc.initialize(project, gradleProperties, config);
-		if (!mc.hasUpdate()) {
+		if (Minecraft.INSTANCE.versions.upToDate()) {
 			System.out.println("Current Minecraft version is up-to-date!");
 			properties.dontFinalize();
 			return;
 		}
-		handleUpdatable(mc, MinecraftUpdatable.UPDATABLE_KEY, project, gradleProperties, config);
-		System.out.printf("New Minecraft version %s found; proceeding with update.\n", mc.updateVersion());
-		for (Entry<String, Updatable> entry : updatables.entrySet()) {
-			Updatable updatable = entry.getValue();
-			if (updatable != mc)
-				handleUpdatable(updatable, entry.getKey(), project, gradleProperties, config);
-		}
+		String mcVer = Util.getMcVer();
+		gradleProperties.setProperty(Minecraft.GRADLE_PROPERTIES_MC_VER_KEY, mcVer);
+		System.out.printf("New Minecraft version %s found; proceeding with update.\n", mcVer);
+		Map<String, Updatable> updatables = config.getUpdatables();
+		updatables.forEach((name, updatable) ->
+				handleUpdatable(updatable, name, project, gradleProperties, config));
 		List<String> toDisable = new ArrayList<>();
 		writeNewProperties(gradleProperties, project, toDisable);
 		disableInBuild(project, toDisable);

@@ -24,7 +24,7 @@ public class FabricLoaderUpdatable extends GradlePropertiesBasedUpdatable {
 	@Override
 	public void initialize(Project project, Properties properties, Config config) {
 		super.initialize(project, properties, config);
-		String mcVer = Util.getMcVer(config);
+		String mcVer = Util.getMcVer();
 		newVersion = getNewVersion(mcVer);
 	}
 

@@ -26,7 +26,7 @@ public class QuiltMappingsUpdatable extends GradlePropertiesBasedUpdatable {
 	@Override
 	public void initialize(Project project, Properties properties, Config config) {
 		super.initialize(project, properties, config);
-		String mcVer = config.getUpdatables().get(MinecraftUpdatable.UPDATABLE_KEY).updateVersion();
+		String mcVer = Util.getMcVer();
 		newVersion = String.valueOf(findLatestBuild(mcVer));
 	}
 

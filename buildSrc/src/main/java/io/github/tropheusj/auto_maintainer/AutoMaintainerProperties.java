@@ -57,11 +57,11 @@ public class AutoMaintainerProperties {
 	}
 
 	public boolean enabled() {
-		return Boolean.parseBoolean((String) properties.get("enabled"));
+		return Boolean.parseBoolean(properties.getProperty("enabled"));
 	}
 
 	public boolean shouldFinalize() {
-		return Boolean.parseBoolean((String) properties.get("should_finalize"));
+		return Boolean.parseBoolean(properties.getProperty("should_finalize"));
 	}
 
 	public void dontFinalize() {
