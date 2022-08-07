@@ -158,7 +158,7 @@ autoMaintainer {
 	branchFormat = "mc%s"
 	branchCreationMode = BranchCreationMode.PATCH
 	modrinthUpdateIfAvailable("LazyDFU", "hvFnDODi")
-	modrinthDisableIfUnavailable("Suggestion Provider Fabric", "cz2CENBO")
+	modrinthDisableIfUnavailable("Suggestion Tweaker", "MBLj38R0")
 	modrinthDisableIfUnavailable("WTHIT", "6AQIaxuO")
 	modrinthDisableIfUnavailable("Bad Packets", "ftdbN0KK")
 	modrinthDisableIfUnavailable("Sodium", "AANobbMI")

@@ -32,7 +32,7 @@ public class QuiltMappingsUpdatable extends GradlePropertiesBasedUpdatable {
 
 	@Override
 	public boolean currentVersionFine() {
-		return true; // if no supported version is found, an exception is thrown, so this is always fine
+		return true; // if no supported version is found, an exception is thrown by findLatestBuild, so this is always fine
 	}
 
 	public static int findLatestBuild(String mcVer) {
