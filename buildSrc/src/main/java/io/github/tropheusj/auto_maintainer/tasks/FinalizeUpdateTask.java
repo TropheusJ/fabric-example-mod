@@ -17,6 +17,11 @@ import org.gradle.api.Project;
 import org.gradle.api.Task;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpRequest;
+import java.net.http.HttpRequest.BodyPublishers;
+import java.net.http.HttpResponse.BodyHandlers;
 
 /**
  * Ran after gametests to finish up the update.
@@ -55,7 +60,7 @@ public class FinalizeUpdateTask {
 	}
 
 	public boolean checkSuccess(Task task) {
-		System.out.println("action status: " + System.getenv("ACTION_STATUS"));
+		System.out.println("action status: " + System.getenv("GH_ACTION_STATUS"));
 		return true;
 	}
 
@@ -76,14 +81,18 @@ public class FinalizeUpdateTask {
 					.setAuthor("Automaintainer", "<>")
 					.call();
 			PushCommand push = git.push();
+			String branchName = null;
 			if (shouldBranch(mode)) {
 				String format = config.getBranchFormat();
-				String branchName = format.formatted(Util.getMcVer());
+				branchName = format.formatted(Util.getMcVer());
 				String currentBranchName = repo.getFullBranch();
 				RefSpec refSpec = new RefSpec(currentBranchName + ":" + branchName);
 				push.setRefSpecs(refSpec);
 			}
 			push.call();
+			if (branchName != null) {
+				updateDefaultBranch(config, project, branchName);
+			}
 			return true;
 		} catch (Exception e) {
 			System.out.println("Error pushing updated code!");
@@ -101,7 +110,28 @@ public class FinalizeUpdateTask {
 			case PATCH -> release;
 			case MAJOR -> major;
 		};
+	}
 
+	private void updateDefaultBranch(Config config, Project project, String branchName) {
+		String actionRepo = System.getenv("GH_ACTION_REPOSITORY");
+		System.out.println("action repo: " + actionRepo);
+		String token = System.getenv("GH_TOKEN");
+		System.out.println("token length: " + token.length());
+//		HttpRequest request = HttpRequest.newBuilder()
+//				.uri(URI.create("https://api.github.com/repos/%s/%s".formatted(owner, repoName)))
+//				.setHeader("Authorization", "token " + token)
+//				.setHeader("Content-Type", "application/json")
+//				.method("PATCH", BodyPublishers.ofString("""
+//						{
+//							"default_branch": "%s"
+//						}
+//						""".formatted(branchName)))
+//				.build();
+//		try {
+//			System.out.println("github api response: " + Util.HTTP_CLIENT.send(request, BodyHandlers.ofString()).body());
+//		} catch (IOException | InterruptedException e) {
+//			throw new RuntimeException(e);
+//		}
 	}
 
 	private void disable(Project project) {
