@@ -105,7 +105,9 @@ public class TryUpdateTask {
 			 BufferedReader reader = new BufferedReader(fileReader)) {
 			String line;
 			while ((line = reader.readLine()) != null) {
-				newData.add(updatePropertiesLine(line, properties, toDisable));
+				String newLine = updatePropertiesLine(line, properties, toDisable);
+				System.out.println(newLine);
+				newData.add(newLine);
 			}
 		} catch (IOException e) {
 			throw new RuntimeException(e);
@@ -136,6 +138,9 @@ public class TryUpdateTask {
 				if (newValue.equals(GradlePropertiesBasedUpdatable.DISABLED_MARKER)) {
 					toDisable.add(newKey);
 					return "# Automatically disabled by AutoMaintainer # " + line;
+				}
+				if (currentKey.equals(Minecraft.GRADLE_PROPERTIES_MC_VER_KEY)) {
+					System.out.println("mc line update - " + currentValue + " - " + newValue);
 				}
 				return line.replace(currentValue, newValue);
 			}
