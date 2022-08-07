@@ -1,4 +1,5 @@
 import io.github.tropheusj.auto_maintainer.AutoMaintainerPlugin
+import io.github.tropheusj.auto_maintainer.BranchCreationMode
 import io.github.tropheusj.auto_maintainer.Util
 
 //file:noinspection GroovyAssignabilityCheck
@@ -154,6 +155,8 @@ publishing {
 // --- auto-updating ---
 
 autoMaintainer {
+	branchFormat = "mc%s"
+	branchCreationMode = BranchCreationMode.PATCH
 	modrinthUpdateIfAvailable("LazyDFU", "hvFnDODi")
 	modrinthDisableIfUnavailable("Suggestion Provider Fabric", "cz2CENBO")
 	modrinthDisableIfUnavailable("WTHIT", "6AQIaxuO")

@@ -14,7 +14,7 @@ public class AutoMaintainerPlugin implements Plugin<Project> {
 		Config config = project.getExtensions().create("autoMaintainer", Config.class);
 		Minecraft.init(config, project);
 		Task update = project.task("tryUpdate", t -> new TryUpdateTask(t, config));
-		Task finalize = project.task("finalizeUpdate", t -> new FinalizeUpdateTask(t, config));
+		Task finalize = project.task("finalizeUpdate", t -> new FinalizeUpdateTask(t, config, project));
 
 		Util.createGameTestTask(project);
 		Task gametest = project.getTasks().getByName("runGametest");

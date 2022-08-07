@@ -36,6 +36,26 @@ public abstract class Config {
 		return quilt;
 	}
 
+	private BranchCreationMode branchCreationMode = BranchCreationMode.MAJOR;
+
+	public void setBranchCreationMode(BranchCreationMode mode) {
+		this.branchCreationMode = mode;
+	}
+
+	public BranchCreationMode getBranchCreationMode() {
+		return branchCreationMode;
+	}
+
+	private String branchFormat = "%s";
+
+	public void setBranchFormat(String format) {
+		this.branchFormat = format;
+	}
+
+	public String getBranchFormat() {
+		return branchFormat;
+	}
+
 	public Config() {
 		// defaults
 		modrinth("Fabric API", "P7dR8mSH", "fabric_version", UpdateRequirement.REQUIRED_FOR_UPDATE);
