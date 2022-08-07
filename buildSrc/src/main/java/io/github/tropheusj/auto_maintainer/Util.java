@@ -2,9 +2,7 @@ package io.github.tropheusj.auto_maintainer;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 
 import com.google.gson.JsonParser;
 
@@ -108,30 +106,49 @@ public abstract class Util {
 		return Minecraft.INSTANCE.versions.newVer();
 	}
 
-	public static String getVersionTarget(String version) {
-		for (JsonElement element : Minecraft.INSTANCE.manifest.versions) {
-			JsonObject entry = element.getAsJsonObject();
-			String id = entry.get("id").getAsString();
-			if (!version.equals(id))
-				continue;
-			String dataUrl = entry.get("url").getAsString();
-			JsonObject data = Util.jsonFromUrl(dataUrl).getAsJsonObject();
-			return data.get("assets").getAsString();
-		}
-		throw new RuntimeException("Could not find version in manifest:" + version);
-	}
-
+	/**
+	 * Convert a Minecraft version into a loader-compatible semver version.
+	 * For Releases, Release Candidates, Pre-releases, and special snapshots, it will be properly converted.
+	 * For regular snapshots or other versions, an asterisk '*' will be returned,
+	 * since it's not possible to find the data loader wants.
+	 * | 		type		 | 	 	  version         | 		  semver		 	 | 		return	   |
+	 * -------------------------------------------------------------------------------------------------
+	 * | 	  release 		 |	       1.19.2    	  |      	  1.19.2		   	 |      1.19.2	   |
+	 * |  release candidate  |       1.17.1-rc2 	  | 	    1.17.1-rc.2	 		 | 	 1.17.1-rc.2   |
+	 * | 	pre release 	 |       1.19.1-pre2      | 	   1.19.1-beta.2 	 	 | 	1.19.1-beta.2  |
+	 * | 	 snapshot 		 |    	  22w18a 	  	  |     1.19-alpha.22.18.a 		 |		  *		   |
+	 * | 	  other		 	 |	22w13oneBlockAtATime  | 1.19-22.w.13.oneBlockAtATime |		  *		   |
+	 */
 	public static String versionToSemver(String version) {
-		String target = getVersionTarget(version);
-		if (version.equals(target))
+		if (Minecraft.RELEASE.matcher(version).matches())
 			return version;
-		String year = version.substring(0, 2);
-		String week = version.substring(3, 5);
-		String end = version.substring(5);
-		String format = "%s-alpha.%s.%s.%s";
-		if (!Minecraft.SNAPSHOT.matcher(version).find())
-			format = "%s-%s.w.%s.%s"; // special snapshots are different because yes
-		return String.format(format, target, year, week, end);
+		if (version.indexOf('-') != -1) {
+			String[] split = version.split("-");
+			String mcVer = split[0];
+			if (Minecraft.RELEASE.matcher(mcVer).matches()) {
+				String type = null;
+				String suffix = split[1];
+				int rcIndex = suffix.indexOf("rc");
+				int preIndex = suffix.indexOf("pre");
+				if (rcIndex != -1) {
+					type = "rc";
+					suffix = suffix.substring(rcIndex + "rc".length());
+				} else if (preIndex != -1) {
+					type = "beta";
+					suffix = suffix.substring(preIndex + "pre".length());
+				}
+				if (type != null) {
+					try {
+						int number = Integer.parseInt(suffix);
+						if (number > 0) {
+							return "%s-%s.%s".formatted(mcVer,  type, number);
+						}
+					} catch (NumberFormatException ignored) {
+					}
+				}
+			}
+		}
+		return "*";
 	}
 
 	/**

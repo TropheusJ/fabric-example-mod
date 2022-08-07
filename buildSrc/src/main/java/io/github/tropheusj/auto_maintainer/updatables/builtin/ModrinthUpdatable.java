@@ -32,7 +32,7 @@ public class ModrinthUpdatable extends GradlePropertiesBasedUpdatable {
 		super.initialize(project, properties, config);
 		String mcVer = Util.getMcVer();
 		JsonArray allVersions = Util.jsonFromUrl("https://api.modrinth.com/v2/project/" + projectId + "/version").getAsJsonArray();
-		checkNewVersion(allVersions, mcVer);
+		checkNewVersion(allVersions, mcVer, config.allowUnstableUpdates());
 		checkCurrentVersionFine(allVersions, mcVer);
 	}
 
@@ -46,9 +46,12 @@ public class ModrinthUpdatable extends GradlePropertiesBasedUpdatable {
 		return type;
 	}
 
-	public void checkNewVersion(JsonArray allVersions, String mcVer) {
-		for (JsonElement element : allVersions) {
+	public void checkNewVersion(JsonArray allVersions, String mcVer, boolean allowUnstable) {
+		versions: for (JsonElement element : allVersions) {
 			JsonObject version = element.getAsJsonObject();
+			String versionType = version.get("version_type").getAsString();
+			if (!allowUnstable && !"release".equals(versionType))
+				continue;
 			if (!supportsLoader(version, false)) // todo: quilt
 				continue;
 			JsonArray supportedMcVersions = version.getAsJsonArray("game_versions");
@@ -56,6 +59,7 @@ public class ModrinthUpdatable extends GradlePropertiesBasedUpdatable {
 				String asString = supported.getAsString();
 				if (asString.equals(mcVer)) {
 					newVersion = version.get("version_number").getAsString();
+					break versions; // exit early - we've found the newest version that works
 				}
 			}
 		}

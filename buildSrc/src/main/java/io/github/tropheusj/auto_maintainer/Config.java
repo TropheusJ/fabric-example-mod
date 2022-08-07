@@ -7,7 +7,6 @@ import io.github.tropheusj.auto_maintainer.updatables.builtin.FabricLoaderUpdata
 import io.github.tropheusj.auto_maintainer.updatables.builtin.ModrinthUpdatable;
 import io.github.tropheusj.auto_maintainer.updatables.builtin.QuiltMappingsUpdatable;
 
-import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -54,6 +53,16 @@ public abstract class Config {
 
 	public String getBranchFormat() {
 		return branchFormat;
+	}
+
+	private boolean allowUnstableUpdates = false;
+
+	public void setAllowUnstableUpdates(boolean allowUnstableUpdates) {
+		this.allowUnstableUpdates = allowUnstableUpdates;
+	}
+
+	public boolean allowUnstableUpdates() {
+		return allowUnstableUpdates;
 	}
 
 	public Config() {

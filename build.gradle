@@ -156,6 +156,7 @@ publishing {
 // --- auto-updating ---
 
 autoMaintainer {
+	allowUnstableUpdates = true
 	branchFormat = "mc%s"
 	branchCreationMode = BranchCreationMode.PATCH
 	modrinthUpdateIfAvailable("LazyDFU", "hvFnDODi")
