@@ -50,5 +50,5 @@ jobs:
         run: ./gradlew finalizeUpdate --stacktrace
         env:
           GH_ACTION_STATUS: ${{ github.action_status }}
-          GH_ACTION_REPOSITORY: ${{ github.action_repository }}
+          GH_ACTION_REPOSITORY: ${{ github.repository }}
           GH_TOKEN: ${{ github.token }}
