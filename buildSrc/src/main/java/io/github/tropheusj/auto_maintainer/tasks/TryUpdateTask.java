@@ -133,7 +133,7 @@ public class TryUpdateTask {
 	 * If the dependency was updated, the version is updated.
 	 */
 	public String updatePropertiesLine(String line, Properties properties, List<String> toDisable) {
-		if (!line.contains("="))
+		if (!line.contains("=") || line.trim().startsWith("#"))
 			return line;
 		for (Entry<Object, Object> entry : properties.entrySet()) {
 			String[] current = line.split("=");
@@ -180,7 +180,7 @@ public class TryUpdateTask {
 	 */
 	public String updateBuildLine(String line, List<String> toDisable) {
 		for (String disabled : toDisable) {
-			if (line.contains(disabled)) {
+			if (line.contains(disabled) && !line.trim().startsWith("//")) {
 				return "// disabled by AutoMaintainer // " + line;
 			}
 		}
