@@ -43,7 +43,6 @@ public class FinalizeUpdateTask {
 		if (!CrossTaskDataHolder.finalize) {
 			return;
 		}
-		pushCode(config, project);
 		boolean success = checkSuccess(task);
 		boolean pushed = pushCode(config, project);
 		if (success) {
@@ -113,25 +112,25 @@ public class FinalizeUpdateTask {
 	}
 
 	private void updateDefaultBranch(Config config, Project project, String branchName) {
-		String actionRepo = System.getenv("GH_ACTION_REPOSITORY");
-		System.out.println("action repo: " + actionRepo);
+		String[] repo = System.getenv("GH_ACTION_REPOSITORY").split("/");
+		String owner = repo[0];
+		String repoName = repo[1];
 		String token = System.getenv("GH_TOKEN");
-		System.out.println("token length: " + token.length());
-//		HttpRequest request = HttpRequest.newBuilder()
-//				.uri(URI.create("https://api.github.com/repos/%s/%s".formatted(owner, repoName)))
-//				.setHeader("Authorization", "token " + token)
-//				.setHeader("Content-Type", "application/json")
-//				.method("PATCH", BodyPublishers.ofString("""
-//						{
-//							"default_branch": "%s"
-//						}
-//						""".formatted(branchName)))
-//				.build();
-//		try {
-//			System.out.println("github api response: " + Util.HTTP_CLIENT.send(request, BodyHandlers.ofString()).body());
-//		} catch (IOException | InterruptedException e) {
-//			throw new RuntimeException(e);
-//		}
+		HttpRequest request = HttpRequest.newBuilder()
+				.uri(URI.create("https://api.github.com/repos/%s/%s".formatted(owner, repoName)))
+				.setHeader("Authorization", "token " + token)
+				.setHeader("Content-Type", "application/json")
+				.method("PATCH", BodyPublishers.ofString("""
+						{
+							"default_branch": "%s"
+						}
+						""".formatted(branchName)))
+				.build();
+		try {
+			System.out.println("github api response: " + Util.HTTP_CLIENT.send(request, BodyHandlers.ofString()).body());
+		} catch (IOException | InterruptedException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	private void disable(Project project) {
