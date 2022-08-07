@@ -23,7 +23,6 @@ public class Minecraft {
 		String oldVersion = currentVersionFromProperties(Util.getGradleProperties(project));
 		String newVersion = manifest.latestVersionId;
 		versions = new Versions(oldVersion, newVersion);
-		System.out.println(versions);
 	}
 
 	public static void init(Config config, Project project) {

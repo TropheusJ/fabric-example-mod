@@ -78,8 +78,7 @@ public class TryUpdateTask {
 		} else {
 			UpdateRequirement type = updatable.updateType();
 			switch (type) {
-				case UPDATE_IF_AVAILABLE ->
-						System.out.printf("%s up-to-date @ %s\n", name, updatable.currentVersion());
+				case UPDATE_IF_AVAILABLE -> upToDate(name, updatable);
 				case REQUIRED_FOR_UPDATE -> {
 					if (updatable.currentVersionFine()) {
 						upToDate(name, updatable);
@@ -115,7 +114,6 @@ public class TryUpdateTask {
 			String line;
 			while ((line = reader.readLine()) != null) {
 				String newLine = updatePropertiesLine(line, properties, toDisable);
-				System.out.println(newLine);
 				newData.add(newLine);
 			}
 		} catch (IOException e) {
@@ -147,9 +145,6 @@ public class TryUpdateTask {
 				if (newValue.equals(GradlePropertiesBasedUpdatable.DISABLED_MARKER)) {
 					toDisable.add(newKey);
 					return "# Automatically disabled by AutoMaintainer # " + line;
-				}
-				if (currentKey.equals(Minecraft.GRADLE_PROPERTIES_MC_VER_KEY)) {
-					System.out.println("mc line update - " + currentValue + " - " + newValue);
 				}
 				return line.replace(currentValue, newValue);
 			}
