@@ -45,14 +45,14 @@ public class TryUpdateTask {
 		AutoMaintainerProperties properties = new AutoMaintainerProperties(project);
 		if (!properties.enabled()) {
 			System.out.println("AutoMaintainer is not currently enabled.");
-			properties.dontFinalize();
+			CrossTaskDataHolder.finalize = false;
 			return;
 		}
 
 		Properties gradleProperties = Util.getGradleProperties(project);
 		if (Minecraft.INSTANCE.versions.upToDate()) {
 			System.out.printf("Current Minecraft version (%s) is up-to-date!\n", Util.getMcVer());
-			properties.dontFinalize();
+			CrossTaskDataHolder.finalize = false;
 			return;
 		}
 		String mcVer = Util.getMcVer();

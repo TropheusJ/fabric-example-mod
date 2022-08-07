@@ -35,6 +35,9 @@ public class FinalizeUpdateTask {
 	}
 
 	public void finalizeUpdate(Task task, Config config, Project project) {
+		if (!CrossTaskDataHolder.finalize) {
+			return;
+		}
 		pushCode(config, project);
 		boolean success = checkSuccess(task);
 		boolean pushed = pushCode(config, project);
@@ -43,11 +46,11 @@ public class FinalizeUpdateTask {
 //				publishRelease();
 				System.out.println("Successfully pushed!");
 			} else {
-				System.out.println("Error pushing - a release will not be published.");
+				throw new RuntimeException("Error pushing - a release will not be published.");
 			}
 		} else {
-			System.out.println("Unsuccessful update :(");
-//			disable();
+			disable(project);
+			throw new RuntimeException("Unsuccessful update :(");
 		}
 	}
 
@@ -60,7 +63,7 @@ public class FinalizeUpdateTask {
 	 * Push the updated code to the repo.
 	 * @return true if successful
 	 */
-	public boolean pushCode(Config config, Project project) {
+	private boolean pushCode(Config config, Project project) {
 		File dotGit = project.getProjectDir().toPath().resolve(".git").toFile();
 		try (Repository repo = new FileRepositoryBuilder().setGitDir(dotGit).build(); Git git = new Git(repo)) {
 			BranchCreationMode mode = config.getBranchCreationMode();
@@ -99,5 +102,11 @@ public class FinalizeUpdateTask {
 			case MAJOR -> major;
 		};
 
+	}
+
+	private void disable(Project project) {
+		AutoMaintainerProperties properties = new AutoMaintainerProperties(project);
+		properties.disable();
+		properties.save();
 	}
 }

@@ -26,7 +26,6 @@ public class AutoMaintainerProperties {
 		try {
 			if (file.createNewFile()) { // true if created, false if already exists
 				setDefaults(properties);
-				save();
 			} else {
 				load();
 			}
@@ -53,19 +52,13 @@ public class AutoMaintainerProperties {
 
 	public void setDefaults(Properties properties) {
 		properties.setProperty("enabled", "true");
-		properties.setProperty("should_finalize", "true");
 	}
 
 	public boolean enabled() {
 		return Boolean.parseBoolean(properties.getProperty("enabled"));
 	}
 
-	public boolean shouldFinalize() {
-		return Boolean.parseBoolean(properties.getProperty("should_finalize"));
-	}
-
-	public void dontFinalize() {
-		properties.setProperty("should_finalize", "false");
-		save();
+	public void disable() {
+		properties.setProperty("enabled", "false");
 	}
 }
