@@ -47,6 +47,6 @@ jobs:
       # Must be a separate stage to not be cancelled if test fails
       - name: finalize update
         if: always()
-        run: ./gradlew finalizeUpdate
+        run: ./gradlew finalizeUpdate --stacktrace
         env:
           ACTION_STATUS: ${{ github.action_status }}

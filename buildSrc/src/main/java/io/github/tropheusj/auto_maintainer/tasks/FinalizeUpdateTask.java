@@ -81,7 +81,7 @@ public class FinalizeUpdateTask {
 			}
 			push.call();
 			return true;
-		} catch (IOException | GitAPIException e) {
+		} catch (Exception e) {
 			System.out.println("Error pushing updated code!");
 			e.printStackTrace();
 			return false;
