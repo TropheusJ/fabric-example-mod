@@ -51,7 +51,7 @@ public class TryUpdateTask {
 
 		Properties gradleProperties = Util.getGradleProperties(project);
 		if (Minecraft.INSTANCE.versions.upToDate()) {
-			System.out.println("Current Minecraft version is up-to-date!");
+			System.out.printf("Current Minecraft version (%s) is up-to-date!\n", Util.getMcVer());
 			properties.dontFinalize();
 			return;
 		}
