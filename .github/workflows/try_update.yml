@@ -16,8 +16,7 @@ jobs:
       PUBLISH_SUFFIX: snapshots
       MAVEN_USER: ${{ secrets.MAVEN_USER }}
       MAVEN_PASS: ${{ secrets.MAVEN_PASS }}
-    permissions:
-      actions: write
+    permissions: write-all
     steps:
       - name: checkout repository
         uses: actions/checkout@v2
