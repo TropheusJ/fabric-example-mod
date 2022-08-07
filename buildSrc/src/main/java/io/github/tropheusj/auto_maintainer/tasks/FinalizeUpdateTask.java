@@ -10,15 +10,13 @@ import io.github.tropheusj.auto_maintainer.minecraft.Minecraft;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.PushCommand;
-import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.internal.storage.file.FileRepository;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.transport.RefSpec;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
 
-import java.io.IOException;
+import java.io.File;
 
 /**
  * Ran after gametests to finish up the update.
@@ -63,7 +61,8 @@ public class FinalizeUpdateTask {
 	 * @return true if successful
 	 */
 	public boolean pushCode(Config config, Project project) {
-		try (Repository repo = new FileRepositoryBuilder().setGitDir(project.getProjectDir().toPath().resolve(".git").toFile()).build(); Git git = new Git(repo)) {
+		File dotGit = project.getProjectDir().toPath().resolve(".git").toFile();
+		try (Repository repo = new FileRepositoryBuilder().setGitDir(dotGit).build(); Git git = new Git(repo)) {
 			BranchCreationMode mode = config.getBranchCreationMode();
 			git.add()
 					.addFilepattern(AutoMaintainerProperties.NAME) // should be the only new file
