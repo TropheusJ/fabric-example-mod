@@ -1,16 +1,10 @@
 package io.github.tropheusj.auto_maintainer.minecraft;
 
-import com.google.gson.JsonObject;
-
 import io.github.tropheusj.auto_maintainer.Config;
 import io.github.tropheusj.auto_maintainer.Util;
 
 import org.gradle.api.Project;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
@@ -26,10 +20,9 @@ public class Minecraft {
 
 	private Minecraft(Config config, Project project) {
 		manifest = new Manifest();
-		String targetVersion = targetVersionFromManifest();
 		String oldVersion = currentVersionFromProperties(Util.getGradleProperties(project));
 		String newVersion = manifest.latestVersionId;
-		versions = new Versions(oldVersion, newVersion, targetVersion);
+		versions = new Versions(oldVersion, newVersion);
 		System.out.println(versions);
 	}
 
@@ -41,11 +34,5 @@ public class Minecraft {
 
 	private String currentVersionFromProperties(Properties properties) {
 		return properties.getProperty(GRADLE_PROPERTIES_MC_VER_KEY);
-	}
-
-	private String targetVersionFromManifest() {
-		String dataUrl = manifest.latestVersion.get("url").getAsString();
-		JsonObject data = Util.jsonFromUrl(dataUrl).getAsJsonObject();
-		return data.get("assets").getAsString();
 	}
 }
