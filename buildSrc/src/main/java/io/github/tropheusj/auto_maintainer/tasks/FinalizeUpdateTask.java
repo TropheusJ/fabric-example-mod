@@ -60,7 +60,7 @@ public class FinalizeUpdateTask {
 	}
 
 	public boolean checkSuccess(Task task) {
-		System.out.println("action status: " + System.getenv("GH_ACTION_STATUS"));
+		System.out.println("action status: " + System.getenv("GH_STATUS"));
 		return true;
 	}
 
@@ -77,8 +77,8 @@ public class FinalizeUpdateTask {
 					.call();
 			git.commit()
 					.setAll(true) // commit all changes
-					.setMessage("Automaintainer - update to: " + Util.getMcVer())
-					.setAuthor("Automaintainer", "<>")
+					.setMessage("AutoMaintainer - update to: " + Util.getMcVer())
+					.setAuthor("AutoMaintainer", "<>")
 					.call();
 			PushCommand push = git.push();
 			String branchName = null;
@@ -113,7 +113,7 @@ public class FinalizeUpdateTask {
 	}
 
 	private void updateDefaultBranch(String branchName) {
-		String[] repo = System.getenv("GH_ACTION_REPOSITORY").split("/");
+		String[] repo = System.getenv("GH_REPOSITORY").split("/");
 		String owner = repo[0];
 		String repoName = repo[1];
 		String token = System.getenv("GH_TOKEN");

@@ -12,6 +12,7 @@ jobs:
       matrix:
         java: [ 17 ]
     runs-on: ubuntu-latest
+    # Environment variables used for publishing to a maven
     env:
       PUBLISH_SUFFIX: snapshots
       MAVEN_USER: ${{ secrets.MAVEN_USER }}
@@ -25,6 +26,7 @@ jobs:
         with:
           java-version: ${{ matrix.java }}
 
+      # cache - greatly improves build speed
       - uses: actions/cache@v2
         with:
           path: |
@@ -47,8 +49,8 @@ jobs:
       # Must be a separate stage to not be cancelled if test fails
       - name: finalize update
         if: always()
-        run: ./gradlew finalizeUpdate --stacktrace
+        run: ./gradlew finalizeUpdate
         env:
-          GH_ACTION_STATUS: ${{ github.action_status }}
-          GH_ACTION_REPOSITORY: ${{ github.repository }}
+          GH_STATUS: ${{ github.status }}
+          GH_REPOSITORY: ${{ github.repository }}
           GH_TOKEN: ${{ secrets.AUTOMAINTAINER_TOKEN }}
