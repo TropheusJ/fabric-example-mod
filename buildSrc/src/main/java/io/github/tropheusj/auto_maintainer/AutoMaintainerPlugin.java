@@ -17,6 +17,6 @@ public class AutoMaintainerPlugin implements Plugin<Project> {
 		Task finalize = project.task("finalizeUpdate", t -> new FinalizeUpdateTask(t, config, project));
 // is this even doing anything?
 //		Util.createGameTestTask(project);
-		Task gametest = project.getTasks().getByName("runGametest");
+//		Task gametest = project.getTasks().getByName("runGametest");
 	}
 }
