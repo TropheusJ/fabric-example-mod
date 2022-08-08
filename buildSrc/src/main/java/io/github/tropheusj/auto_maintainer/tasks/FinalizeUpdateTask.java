@@ -44,24 +44,29 @@ public class FinalizeUpdateTask {
 		if (!CrossTaskDataHolder.finalize) {
 			return;
 		}
-		boolean success = checkSuccess(task);
-		boolean pushed = pushCode(config, project);
+		boolean success = checkSuccess();
 		if (success) {
-			if (pushed) {
-//				publishRelease();
-				System.out.println("Successfully pushed!");
-			} else {
-				throw new RuntimeException("Error pushing - a release will not be published.");
-			}
+			tryPush(config, project, true);
 		} else {
 			disable(project);
-			throw new RuntimeException("Unsuccessful update :(");
+			tryPush(config, project, false);
+			throw new RuntimeException("Gametests failed, not publishing");
 		}
 	}
 
-	public boolean checkSuccess(Task task) {
-		System.out.println("action status: " + System.getenv("JOB_STATUS"));
-		return true;
+	public void tryPush(Config config, Project project, boolean publish) {
+		if (pushCode(config, project)) {
+			if (publish) {
+//				publishRelease();
+			}
+			System.out.println("Successfully pushed!");
+		} else {
+			throw new RuntimeException("Error pushing - a release will not be published.");
+		}
+	}
+
+	public boolean checkSuccess() {
+		return "success".equals(System.getenv("JOB_STATUS"));
 	}
 
 	/**

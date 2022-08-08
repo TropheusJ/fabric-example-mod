@@ -7,6 +7,6 @@ import net.minecraft.gametest.framework.GameTestHelper;
 public class ExampleModGameTest implements FabricGameTest {
 	@GameTest(template = EMPTY_STRUCTURE)
 	public void exampleTest(GameTestHelper helper) {
-		helper.fail("test");
+		helper.succeed();
 	}
 }
