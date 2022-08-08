@@ -24,7 +24,7 @@ More will be added here later.
   - see try_update.yml for an example
   - Must run `gradlew tryUpdate`, `gradlew runGametest`,
   and `gradlew finalizeUpdate` in that order
-  - Requires some environment variables: `github.status`, `github.repository`,
+  - Requires some environment variables: `job.status`, `github.repository`,
   and `secrets.AUTOMAINTAINER_TOKEN`
     - `AUTOMAINTAINER_TOKEN` must be a repository secret containing a personal
     access token. The only permission this token needs is `repo/public_repo`.
