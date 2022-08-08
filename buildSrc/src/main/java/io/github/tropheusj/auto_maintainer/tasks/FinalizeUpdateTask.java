@@ -60,7 +60,7 @@ public class FinalizeUpdateTask {
 	}
 
 	public boolean checkSuccess(Task task) {
-		System.out.println("action status: " + System.getenv("GH_STATUS"));
+		System.out.println("action status: " + System.getenv("JOB_STATUS"));
 		return true;
 	}
 
@@ -132,7 +132,7 @@ public class FinalizeUpdateTask {
 			if (response.statusCode() == 200) {
 				System.out.println("Successfully updated the default branch to: " + branchName);
 			} else {
-				System.out.println("Error updating the default branch, code " + response.statusCode());
+				System.out.println("Error updating the default branch, status code " + response.statusCode());
 				System.out.println(response.body());
 			}
 		} catch (IOException | InterruptedException e) {

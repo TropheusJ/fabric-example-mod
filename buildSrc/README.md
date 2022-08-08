@@ -34,6 +34,7 @@ More will be added here later.
 - Set up your game tests. AutoMaintainer will use the status of your tests to
 determine if a new release should be made. **If all tests pass, the update
 will be published.**
+  - TODO gametest tutorial
 
 # Process
 - AutoMaintainer starts by checking for a new Minecraft version. If one is not

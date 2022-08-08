@@ -51,6 +51,6 @@ jobs:
         if: always()
         run: ./gradlew finalizeUpdate
         env:
-          GH_STATUS: ${{ github.status }}
+          JOB_STATUS: ${{ job.status }}
           GH_REPOSITORY: ${{ github.repository }}
           GH_TOKEN: ${{ secrets.AUTOMAINTAINER_TOKEN }}
