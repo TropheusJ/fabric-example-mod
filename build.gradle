@@ -2,7 +2,7 @@
 //file:noinspection GroovyAccessibility
 //file:noinspection GradlePackageVersionRange
 plugins {
-	id "fabric-loom" version "1.4.+"
+	id "fabric-loom" version "1.6.+"
 	id "maven-publish"
 }
 
@@ -28,7 +28,8 @@ dependencies {
 	// dev environment
 	minecraft("com.mojang:minecraft:$minecraft_version")
 	mappings(loom.layered {
-		it.mappings("org.quiltmc:quilt-mappings:$minecraft_version+build.$qm_version:intermediary-v2")
+		if (qm_version != "none")
+			it.mappings("org.quiltmc:quilt-mappings:$minecraft_version+build.$qm_version:intermediary-v2")
 		if (parchment_version != "none")
 			it.parchment("org.parchmentmc.data:parchment-$minecraft_version:$parchment_version@zip")
 		it.officialMojangMappings { nameSyntheticMembers = false }
@@ -36,10 +37,10 @@ dependencies {
 	modImplementation("net.fabricmc:fabric-loader:$loader_version")
 
 	// dev env
-	modLocalRuntime("maven.modrinth:suggestion-tweaker:$suggestion_tweaker_version")
-	modLocalRuntime("maven.modrinth:cloth-config:$cloth_config_version") { exclude(group: "net.fabricmc.fabric-api") }
-	modLocalRuntime("maven.modrinth:jade:$jade_version")
-	modLocalRuntime("com.terraformersmc:modmenu:$modmenu_version") { exclude(group: "net.fabricmc"); exclude(group: "net.fabricmc.fabric-api") }
+//	modLocalRuntime("maven.modrinth:suggestion-tweaker:$suggestion_tweaker_version")
+//	modLocalRuntime("maven.modrinth:cloth-config:$cloth_config_version") { exclude(group: "net.fabricmc.fabric-api") }
+//	modLocalRuntime("maven.modrinth:jade:$jade_version")
+//	modLocalRuntime("com.terraformersmc:modmenu:$modmenu_version") { exclude(group: "net.fabricmc"); exclude(group: "net.fabricmc.fabric-api") }
 
 	// dependencies
 	modImplementation("net.fabricmc.fabric-api:fabric-api:$fabric_version")
@@ -62,7 +63,7 @@ processResources {
 	properties.put("version", version)
 	properties.put("loader_version", loader_version)
 	properties.put("fabric_version", fabric_version)
-	properties.put("minecraft_version", minecraft_version)
+	properties.put("minecraft_dependency", minecraft_dependency)
 
 	properties.forEach((k, v) -> inputs.property(k, v))
 
