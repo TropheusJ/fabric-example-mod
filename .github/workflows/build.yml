@@ -36,11 +36,11 @@ jobs:
       - name: Make Gradle Wrapper Executable
         run: chmod +x ./gradlew
 
-      - name: Run Tests
-        run: ./gradlew runGametest
-
       - name: Build
         run: ./gradlew build
+
+      - name: Run Tests
+        run: ./gradlew runGametest
 
       - name: Publish Snapshot
         if: ${{ github.event.inputs.type == 'snapshot' }}
