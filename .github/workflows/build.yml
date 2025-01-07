@@ -40,7 +40,6 @@ jobs:
         run: ./gradlew runGametest
 
       - name: Build
-        if: ${{ github.event.inputs.type == 'normal' }}
         run: ./gradlew build
 
       - name: Publish Snapshot
