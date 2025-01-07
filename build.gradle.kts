@@ -88,7 +88,7 @@ loom {
 	runs {
 		register("testmodClient") {
 			client()
-			name ("Testmod Client")
+			name("Testmod Client")
 			source(testmod)
 		}
 		register("testmodServer") {
@@ -100,8 +100,8 @@ loom {
 			server()
 			source(testmod)
             ideConfigGenerated(false) // this is meant for CI
-			vmArg("-Dfabric-api.gametest")
-			vmArg("-Dfabric-api.gametest.report-file=${layout.buildDirectory}/junit.xml")
+            property("fabric-api.gametest")
+            property("fabric-api.gametest.report-file=${layout.buildDirectory}/junit.xml")
 			runDir("run/gametest_server")
 		}
 	}
