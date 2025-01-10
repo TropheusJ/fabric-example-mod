@@ -28,7 +28,7 @@ plugins {
 base.archivesName = "modid"
 group = "io.github.tropheusj"
 
-val buildNum = providers.systemProperty("GITHUB_RUN_NUMBER")
+val buildNum = providers.environmentVariable("GITHUB_RUN_NUMBER")
     .filter(String::isNotEmpty)
 	.map { "build.$it" }
     .orElse("local")
