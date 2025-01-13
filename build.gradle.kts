@@ -1,23 +1,23 @@
 // versions
-val minecraftVersion = "1.21.1"
-val minecraftDep = "=1.21.1"
+val minecraftVersion = "1.21.4"
+val minecraftDep = "=1.21.4"
 // https://parchmentmc.org/docs/getting-started
-val parchmentVersion = "2024.11.17"
+val parchmentVersion = "2025.01.05"
 // https://fabricmc.net/develop
 val loaderVersion = "0.16.9"
-val fapiVersion = "0.114.0+1.21.1"
+val fapiVersion = "0.114.2+1.21.4"
 
 // dev env mods
 // https://modrinth.com/mod/sodium/versions?l=fabric
-val sodiumVersion = "mc1.21.1-0.6.5-fabric"
+val sodiumVersion = "mc1.21.4-0.6.6-fabric"
 // https://modrinth.com/mod/jade/versions?l=fabric
-val jadeVersion = "15.9.2+fabric"
+val jadeVersion = "17.2.0+fabric"
 // https://modrinth.com/mod/modmenu/versions
-val modmenuVersion = "11.0.3"
+val modmenuVersion = "13.0.0"
 // https://modrinth.com/mod/suggestion-tweaker/versions?l=fabric
-val suggestionTweakerVersion = "1.20.6-1.5.2+fabric"
+//val suggestionTweakerVersion = "1.20.6-1.5.2+fabric"
 // https://modrinth.com/mod/cloth-config/versions?l=fabric
-val clothConfigVersion = "15.0.140+fabric"
+//val clothConfigVersion = "15.0.140+fabric"
 
 // buildscript
 plugins {
@@ -57,8 +57,8 @@ dependencies {
     modLocalRuntime("maven.modrinth:sodium:$sodiumVersion")
     modLocalRuntime("maven.modrinth:jade:$jadeVersion")
     modLocalRuntime("maven.modrinth:modmenu:$modmenuVersion")
-	modLocalRuntime("maven.modrinth:suggestion-tweaker:$suggestionTweakerVersion")
-	modLocalRuntime("maven.modrinth:cloth-config:$clothConfigVersion")
+//	modLocalRuntime("maven.modrinth:suggestion-tweaker:$suggestionTweakerVersion")
+//	modLocalRuntime("maven.modrinth:cloth-config:$clothConfigVersion")
 }
 
 tasks.withType(ProcessResources::class) {
