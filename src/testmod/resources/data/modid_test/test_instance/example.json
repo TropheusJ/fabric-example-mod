@@ -1,0 +1,6 @@
+{
+  "type": "block_based",
+  "environment": "default",
+  "structure": "modid_test:example",
+  "max_ticks": 100
+}
