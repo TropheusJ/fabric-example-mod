@@ -22,12 +22,22 @@ repositories {
     }
 }
 
+val testmod: SourceSet by sourceSets.creating
+val testmodImplementation: Configuration by configurations.getting
+
 dependencies {
 	minecraft(libs.minecraft)
 	mappings(loom.officialMojangMappings())
 
 	modImplementation(libs.bundles.fabric)
     modLocalRuntime(libs.bundles.dev)
+
+    testmodImplementation(project(":", configuration = "namedElements"))
+}
+
+configurations {
+    getByName("testmodCompileClasspath").extendsFrom(compileClasspath.get())
+    getByName("testmodRuntimeClasspath").extendsFrom(runtimeClasspath.get())
 }
 
 tasks.processResources {
@@ -43,14 +53,6 @@ tasks.processResources {
 	filesMatching("fabric.mod.json") {
 		expand(properties)
 	}
-}
-
-val testmod: SourceSet by sourceSets.creating {
-	val main: SourceSet = sourceSets.main.get()
-	compileClasspath += main.compileClasspath
-	compileClasspath += main.output
-	runtimeClasspath += main.runtimeClasspath
-	runtimeClasspath += main.output
 }
 
 loom {
