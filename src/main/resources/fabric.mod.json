@@ -16,6 +16,9 @@
   "entrypoints": {
     "main": [
       "io.github.tropheusj.modid.ExampleMod"
+    ],
+    "client": [
+      "io.github.tropheusj.modid.client.ExampleModClient"
     ]
   },
   "mixins": [

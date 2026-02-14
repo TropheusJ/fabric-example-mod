@@ -27,12 +27,10 @@ val testmodImplementation: Configuration by configurations.getting
 
 dependencies {
 	minecraft(libs.minecraft)
-	mappings(loom.officialMojangMappings())
+    implementation(libs.bundles.fabric)
+//    localRuntime(libs.bundles.dev)
 
-	modImplementation(libs.bundles.fabric)
-    modLocalRuntime(libs.bundles.dev)
-
-    testmodImplementation(project(":", configuration = "namedElements"))
+    testmodImplementation(project(":"))
 }
 
 configurations {
@@ -43,7 +41,7 @@ configurations {
 tasks.processResources {
 	val properties: Map<String, Any> = mapOf(
 		"version" to version,
-        "minecraft_version" to libs.versions.minecraft.get(),
+        "minecraft_version" to "26.1-alpha.7",//libs.versions.minecraft.get(),
 		"loader_version" to libs.versions.loader.get(),
 		"fapi_version" to libs.versions.fapi.get()
 	)
@@ -56,6 +54,8 @@ tasks.processResources {
 }
 
 loom {
+    splitEnvironmentSourceSets()
+
 	runs {
 		register("testmodClient") {
 			client()
@@ -84,7 +84,7 @@ loom {
 
 java {
 	withSourcesJar()
-    toolchain.languageVersion = JavaLanguageVersion.of(21)
+    toolchain.languageVersion = JavaLanguageVersion.of(25)
 }
 
 publishing {

@@ -1,11 +1,11 @@
 [versions]
-loom = "1.11.+"
+loom = "1.15.+"
 
-minecraft = "1.21.10"
+minecraft = "26.1-snapshot-7"
 
 # https://fabricmc.net/develop
-loader = "0.17.2"
-fapi = "0.134.1+1.21.10"
+loader = "0.18.4"
+fapi = "0.143.4+26.1"
 
 # dev env mods
 # https://modrinth.com/mod/sodium/versions?l=fabric
@@ -26,5 +26,5 @@ fabric = [ "loader", "fapi" ]
 dev = [ "sodium", "mod_menu" ]
 
 [plugins]
-loom = { id = "fabric-loom", version.ref = "loom" }
+loom = { id = "net.fabricmc.fabric-loom", version.ref = "loom" }
 maven = { id = "maven-publish" }
