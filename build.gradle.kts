@@ -1,9 +1,8 @@
 plugins {
 	alias(libs.plugins.loom)
-	alias(libs.plugins.maven)
+    `maven-publish`
 }
 
-base.archivesName = "modid"
 group = "io.github.tropheusj"
 
 val buildNum = providers.environmentVariable("GITHUB_RUN_NUMBER")
@@ -15,7 +14,7 @@ val buildNum = providers.environmentVariable("GITHUB_RUN_NUMBER")
 version = "0.1.0+$buildNum-mc${libs.versions.minecraft.get()}"
 
 repositories {
-	exclusiveContent {
+    exclusiveContent {
         forRepositories(maven("https://api.modrinth.com/maven")).filter {
             includeGroup("maven.modrinth")
         }
@@ -28,22 +27,22 @@ val testmodImplementation: Configuration by configurations.getting
 dependencies {
 	minecraft(libs.minecraft)
     implementation(libs.bundles.fabric)
-//    localRuntime(libs.bundles.dev)
+    localRuntime(libs.bundles.dev)
 
     testmodImplementation(project(":"))
 }
 
 configurations {
-    getByName("testmodCompileClasspath").extendsFrom(compileClasspath.get())
-    getByName("testmodRuntimeClasspath").extendsFrom(runtimeClasspath.get())
+    getByName("testmodCompileClasspath").extendsFrom(compileClasspath)
+    getByName("testmodRuntimeClasspath").extendsFrom(runtimeClasspath)
 }
 
 tasks.processResources {
 	val properties: Map<String, Any> = mapOf(
 		"version" to version,
-        "minecraft_version" to "26.1-alpha.7",//libs.versions.minecraft.get(),
-		"loader_version" to libs.versions.loader.get(),
-		"fapi_version" to libs.versions.fapi.get()
+        "minecraft_version" to libs.versions.minecraft.get(),
+		"loader_version" to libs.versions.fabric.loader.get(),
+		"fapi_version" to libs.versions.fabric.api.get()
 	)
 
 	inputs.properties(properties)
